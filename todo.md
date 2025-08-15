@@ -6,4 +6,4 @@ Fixes for new submission:
 5) Fix the mux output scheme such that it doesn't drop bits on transition
 6) Fix writing so that it doesn't double write
 7) Rewrite the instruction driver
-8) Add an SR (inst_start/inst_stop) latch for clk_enable in ch_digital
+8) Add an SR (inst_start/inst_stop) latch for clk_enable

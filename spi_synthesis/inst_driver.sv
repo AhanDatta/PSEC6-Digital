@@ -1,11 +1,13 @@
 module inst_driver (
-    input logic [7:0] inst_reg,
+    input logic [1:0] inst_reg,
     input logic csb,
     input logic rstn,
+    input logic inst_stop, //should be connected to trigger in, stops sampling clk
 
     output logic inst_rst,
     output logic inst_readout,
-    output logic inst_start
+    output logic inst_start,
+    output logic clk_enable
 );
     logic full_rstn;
     assign full_rstn = csb && rstn;
@@ -19,17 +21,17 @@ module inst_driver (
             inst_start = 0;
         end 
         else begin
-            if (inst_reg == 8'd1) begin //reset command
+            if (inst_reg == 2'd1) begin //reset command
                 inst_rst = 1;
                 inst_readout = 0;
                 inst_start = 0;
             end
-            else if (inst_reg == 8'd2) begin //readout command
+            else if (inst_reg == 2'd2) begin //readout command
                 inst_rst = 0;
                 inst_readout = 1;
                 inst_start = 0;
             end
-            else if (inst_reg == 8'd3) begin //start command
+            else if (inst_reg == 2'd3) begin //start command
                 inst_rst = 0;
                 inst_readout = 0;
                 inst_start = 1;
@@ -41,4 +43,17 @@ module inst_driver (
             end
         end 
     end 
+
+    //SR latch to enable/disable 5GHz sampling clk
+    always_latch begin
+        if (!rstn) begin
+            clk_enable <= 1'b0;
+        end
+        else if (inst_start) begin
+            clk_enable <= 1'b1;
+        end
+        else if (inst_stop) begin
+            clk_enable <= 1'b0;
+        end
+    end
 endmodule

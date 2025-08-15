@@ -9,7 +9,7 @@ module serdes (
     logic full_rstn;
     assign full_rstn = csb && rstn;
 
-    always_ff @(posedge sclk or negedge full_rstn) begin
+    always_ff @(posedge spi_clk or negedge full_rstn) begin
         if (!full_rstn) begin
             byte_deser <= 8'b0;
         end

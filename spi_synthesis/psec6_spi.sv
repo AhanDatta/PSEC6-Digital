@@ -3,7 +3,7 @@ module psec6_spi (
     input logic rstn,
     input logic spi_clk,
     input logic pico,
-    input logic csb,
+    input logic cs,
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
 
     //internal signal input
@@ -21,15 +21,15 @@ module psec6_spi (
 
     //output to channel digital
     output logic [7:0] trigger_channel_mask, //address 2
-    
-    //set in address 3
-    output logic inst_rst, //instruction 1
-    output logic inst_readout, //instruction 2
-    output logic inst_start, //instruction 3
-
     output logic [1:0] mode, //address 4
     output logic [7:0] disc_polarity, //address 5
-    output logic [5:0] trigger_delay //address 8
+    output logic [5:0] trigger_delay, //address 8
+    output logic [2:0] select_reg, //prepares correct counter for readout in digital channel
+    
+    //instructions set in address 3
+    output logic inst_rst, //instruction 1
+    output logic inst_readout, //instruction 2
+    output logic inst_start //instruction 3    
 );
 
     logic [7:0] byte_deser;
@@ -41,7 +41,7 @@ module psec6_spi (
     serdes input_deserializer (
         .spi_clk (spi_clk),
         .pico (pico),
-        .csb (csb),
+        .cs (cs),
         .rstn (rstn),
 
         .byte_deser(byte_deser)
@@ -49,7 +49,7 @@ module psec6_spi (
 
     addr_logic addressing_logic (
         .spi_clk (spi_clk),
-        .csb (csb),
+        .cs (cs),
         .rstn (rstn),
         .byte_deser (byte_deser),
         .pico (pico),
@@ -61,7 +61,7 @@ module psec6_spi (
 
     wr_regs data_registers (
         .spi_clk(spi_clk),
-        .csb (csb),
+        .cs (cs),
         .rstn (rstn),
 
         .is_write (is_write),
@@ -84,7 +84,7 @@ module psec6_spi (
 
     inst_driver instruction_pulse_gen (
         .inst_reg (instruction),
-        .csb (csb),
+        .cs (cs),
         .rstn (rstn),
         .inst_stop (trigger_in),
 
@@ -92,6 +92,15 @@ module psec6_spi (
         .inst_readout (inst_readout),
         .inst_start (inst_start),
         .clk_enable (clk_enable)
+    );
+
+    addr_to_ch_select counter_readout_select (
+        .rstn (rstn),
+        .cs (cs),
+        .addr (addr),
+
+
+        .select_reg (select_reg)
     );
 
 endmodule

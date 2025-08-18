@@ -7,3 +7,12 @@ Fixes for new submission:
 6) Fix writing so that it doesn't double write
 7) Rewrite the instruction driver
 8) Add an SR (inst_start/inst_stop) latch for clk_enable
+
+Debug Log:
+- Writing works
+- Start instruction works
+- Readout from W/R regs works
+- (Sequential) Non-destructive read works
+
+To-do:
+- Write the mux (carefully)

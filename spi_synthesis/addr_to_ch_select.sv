@@ -1,13 +1,24 @@
 module addr_to_ch_select (
     input logic rstn,
     input logic cs,
+    input logic spi_clk,
     input logic [6:0] addr,
 
     output logic [2:0] select_reg
 );
 
     logic full_rstn;
+    logic [6:0] addr_one; //address lagging 1 spi_clk
     assign full_rstn = cs && rstn;
+
+    always_ff @(posedge spi_clk or negedge full_rstn) begin
+        if (!full_rstn) begin
+            addr_one <= '0;
+        end 
+        else begin
+            addr_one <= addr;
+        end
+    end
 
     //follows formula select_reg = (addr-11) % 7 to choose the correct reg from each channel to read out
     always_comb begin
@@ -15,7 +26,7 @@ module addr_to_ch_select (
             select_reg = 3'b111;
         end
         else begin
-            unique case (addr)
+            unique case (addr_one)
                 // addr 11-17: select_reg = 0-6
                 7'd11: select_reg = 3'd0;
                 7'd12: select_reg = 3'd1;

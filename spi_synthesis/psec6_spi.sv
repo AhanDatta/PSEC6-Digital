@@ -97,6 +97,7 @@ module psec6_spi (
     addr_to_ch_select counter_readout_select (
         .rstn (rstn),
         .cs (cs),
+        .spi_clk (spi_clk),
         .addr (addr),
 
 

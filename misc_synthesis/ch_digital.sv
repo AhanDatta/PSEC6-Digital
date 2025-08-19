@@ -236,7 +236,7 @@ module PSEC5_CH_DIGITAL (
     end
 
     always_ff @(posedge INST_READOUT) begin
-        ctmp <= {<<{3'b000, trigger_cnt, CE, CD, CC, CB, CA}}; //56 bits total.
+        ctmp <= {<<{3'b000, trigger_cnt, CE, CD, CC, CB, CA}}; //56 bits total. streamed to be backward here to later be MSB to LSB
     end
 
 
@@ -246,7 +246,7 @@ module PSEC5_CH_DIGITAL (
         end
         else begin //Default behavior when SPI_CLK is high
             CNT_SER <= ctmp[SELECT_REG*8+ser_pos];
-            ser_pos <= ser_pos + 1;
+            ser_pos <= ser_pos + 1; //only 3 bit, so effectively mod 8
         end
     end
 

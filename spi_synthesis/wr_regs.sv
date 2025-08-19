@@ -119,7 +119,7 @@ module wr_regs #(
     //READING LOGIC:
     //----------------------------------------------------------------------------------------------------------------------------------------------------
     //everything read msb to lsb, from the address provided
-    assign rdata_ready_flag = (spi_clk_counter%8 == 16'd1);
+    assign rdata_ready_flag = (spi_clk_counter%8 == 16'd1) && (spi_clk_counter != 16'd1);
     always_ff @(posedge rdata_ready_flag or negedge full_rstn) begin
         if (!full_rstn) begin
             rdata <= '0;

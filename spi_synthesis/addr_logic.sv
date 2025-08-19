@@ -1,3 +1,8 @@
+typedef enum logic {
+    SPI_ADDR,
+    SPI_DATA
+} spi_state_t;
+
 module addr_logic (
     input logic spi_clk,
     input logic cs,
@@ -11,6 +16,7 @@ module addr_logic (
 );
     logic [15:0] spi_clk_counter; //used to track which part of the transaction we are in
     logic byte_flag;
+    spi_state_t spi_state;
     logic full_rstn;
     assign full_rstn = cs && rstn;
 
@@ -42,24 +48,33 @@ module addr_logic (
         if (!rstn) begin
             is_write <= 0;
             addr <= '0;
-            wdata <= '0; 
+            wdata <= '0;
+            spi_state <= SPI_ADDR;
         end
         else if (!cs) begin
-            is_write <= 0;
+            //async cs deassertion resets state
+            spi_state <= SPI_ADDR;
             addr <= '0;
-            wdata <= wdata; //need to keep data as to not write zero into register on cs
-        end 
+            is_write <= 0;
+            //keep wdata to avoid writing glitches
+        end
         else begin
-            if (spi_clk_counter == 16'd8) begin
-                is_write <= byte_deser[7]; //msb is used to declare write
-                addr <= byte_deser[6:0]; //lower order bits set initial address, have to use hack
-                wdata <= '0;
-            end
-            else begin
-                is_write <= is_write;
-                addr <= addr + 1; //increment address on each additional byte
-                wdata <= byte_deser[7:0];
-            end 
+            //process on byte_flag when CS is active
+            case (spi_state)
+                SPI_ADDR: begin
+                    //first byte sets address, is_write
+                    is_write <= byte_deser[7];
+                    addr <= byte_deser[6:0];
+                    wdata <= '0;
+                    spi_state <= SPI_DATA;
+                end
+                
+                SPI_DATA: begin
+                    wdata <= byte_deser[7:0];
+                    addr <= addr + 1; //supports address rollover
+                    spi_state <= SPI_DATA; //stay in SPI_DATA for additional bytes until cs
+                end
+            endcase
         end
     end
 

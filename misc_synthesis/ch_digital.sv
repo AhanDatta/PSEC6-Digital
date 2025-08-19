@@ -16,9 +16,9 @@ typedef enum logic [3:0] {
     } state_t;
 
 typedef enum logic [1:0] {
-    MODE_SAMPLE1,
-    MODE_SAMPLE2,
-    MODE_SAMPLE4
+    MODE_SAMPLE1 = 2'b0,
+    MODE_SAMPLE2 = 2'b01,
+    MODE_SAMPLE4 = 2'b11
 } smode_t;
 module PSEC5_CH_DIGITAL (
     input logic INST_START,

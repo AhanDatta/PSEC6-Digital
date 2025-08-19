@@ -36,6 +36,7 @@ module wr_regs #(
 
     //data to be read out over 8 clk cycles
     logic [7:0] rdata;
+    logic rdata_ready_flag; //flag for spi_clk_counter in the right state to shift data
 
     //internal registers to handle width changes
     logic [7:0] int_vco_digital_band; 
@@ -58,7 +59,7 @@ module wr_regs #(
     logic [NUM_WR_REGS-1:0] data_reg_addr_latch_signal;
     logic data_reg_wdata_flag_latch_signal;
 
-    //clock counter to latch at the proper time
+    //clock counter to latch data at the proper time
     logic [15:0] spi_clk_counter;
 
     assign full_rstn = rstn & cs;
@@ -118,8 +119,12 @@ module wr_regs #(
     //READING LOGIC:
     //----------------------------------------------------------------------------------------------------------------------------------------------------
     //everything read msb to lsb, from the address provided
-    always_latch begin
-        if (spi_clk_counter%8 == 16'd1) begin
+    assign rdata_ready_flag = (spi_clk_counter%8 == 16'd1);
+    always_ff @(posedge rdata_ready_flag or negedge full_rstn) begin
+        if (!full_rstn) begin
+            rdata <= '0;
+        end
+        else begin
             unique case (addr)
                 7'd1: rdata <= int_vco_digital_band;
                 7'd2: rdata <= int_trigger_channel_mask; 
@@ -133,9 +138,6 @@ module wr_regs #(
                 7'd10: rdata <= int_pll_locked;
                 default: rdata <= '0;
             endcase
-        end
-        else begin
-            rdata <= rdata;
         end
     end 
 

@@ -163,10 +163,10 @@ module psec6_spi_tb ();
         #25;
         rstn = 1;
 
-        //writing 3 to vco_digital_band (1)
+        //writing ff to vco_digital_band (1)
         write_data (
             .addr (7'd1),
-            .wdata (8'd3),
+            .wdata (8'hff),
             .clk_period (25),
             .rbyte (rdata)
         );

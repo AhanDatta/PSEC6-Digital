@@ -7,15 +7,18 @@ module psec6_spi (
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
 
     //internal signal input
-    input logic pll_locked, //read from address 10
+    input logic pll_locked, //read from address 11
 
     //output to readout mux
     output logic poci_spi,
 
+    //output to test point mux
+    output logic [7:0] test_point_control,
+
     //output to clock blocks
     output logic clk_enable,
     output logic [5:0] vco_digital_band, //address 1
-    output logic [4:0] ref_clk_sel, //address 6
+    output logic [2:0] ref_clk_sel, //address 6
     output logic slow_mode, //address 7
     output logic pll_switch, //address 9, activates on-chip pll
 
@@ -32,27 +35,16 @@ module psec6_spi (
     output logic inst_start //instruction 3    
 );
 
-    logic [7:0] byte_deser;
+    logic is_write;
     logic [6:0] addr;
     logic [7:0] wdata;
-    logic is_write;
     logic [1:0] instruction;
 
-    serdes input_deserializer (
+    spi_frontend frontend (
         .spi_clk (spi_clk),
         .pico (pico),
         .cs (cs),
         .rstn (rstn),
-
-        .byte_deser(byte_deser)
-    );
-
-    addr_logic addressing_logic (
-        .spi_clk (spi_clk),
-        .cs (cs),
-        .rstn (rstn),
-        .byte_deser (byte_deser),
-        .pico (pico),
 
         .is_write (is_write),
         .addr (addr),
@@ -78,6 +70,7 @@ module psec6_spi (
         .slow_mode (slow_mode),
         .trigger_delay (trigger_delay),
         .pll_switch (pll_switch),
+        .test_point_control (test_point_control),
 
         .poci_spi (poci_spi)
     );
@@ -99,7 +92,6 @@ module psec6_spi (
         .cs (cs),
         .spi_clk (spi_clk),
         .addr (addr),
-
 
         .select_reg (select_reg)
     );

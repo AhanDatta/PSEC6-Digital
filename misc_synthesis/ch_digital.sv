@@ -235,20 +235,21 @@ module PSEC5_CH_DIGITAL (
         end
     end
 
-    always_ff @(posedge INST_READOUT) begin
-        ctmp <= {<<{3'b000, trigger_cnt, CE, CD, CC, CB, CA}}; //56 bits total. streamed to be backward here to later be MSB to LSB
-    end
+    ch_spi_readout spi_readout (
+        .INST_READOUT (INST_READOUT),
+        .SPI_CLK (SPI_CLK),
+        .RSTB (RSTB),
+        .SELECT_REG (SELECT_REG),
 
+        .trigger_cnt (trigger_cnt),
+        .CE (CE),
+        .CD (CD),
+        .CC (CC),
+        .CB (CB),
+        .CA (CA),
 
-    always_ff @(posedge SPI_CLK, negedge RSTB) begin
-        if (!RSTB) begin
-            ser_pos <= 0;
-        end
-        else begin //Default behavior when SPI_CLK is high
-            CNT_SER <= ctmp[SELECT_REG*8+ser_pos];
-            ser_pos <= ser_pos + 1; //only 3 bit, so effectively mod 8
-        end
-    end
+        .CNT_SER (CNT_SER)
+    );
 
     always_comb begin
         //Update the control latches based on the current state.

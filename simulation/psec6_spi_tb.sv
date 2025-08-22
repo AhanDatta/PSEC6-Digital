@@ -16,10 +16,12 @@ module psec6_spi_tb #(
 
     logic poci_spi;
 
+    logic [7:0] test_point_control;
+
     //output to clock blocks
     logic clk_enable;
     logic [5:0] vco_digital_band; //address 1
-    logic [4:0] ref_clk_sel; //address 6
+    logic [2:0] ref_clk_sel; //address 6
     logic slow_mode; //address 7
     logic pll_switch; //address 9; activates on-chip pll
 
@@ -55,6 +57,7 @@ module psec6_spi_tb #(
         .ref_clk_sel (ref_clk_sel),
         .slow_mode (slow_mode),
         .pll_switch (pll_switch),
+        .test_point_control (test_point_control),
 
         .trigger_channel_mask (trigger_channel_mask),
         .mode (mode),
@@ -157,9 +160,9 @@ module psec6_spi_tb #(
         logic [7:0] rbyte;
 
         cs = 1;
-        //set address to first timestamp reg (11)
+        //set address to first timestamp reg 
         send_byte_spi (
-            .data_byte ({1'b0, 7'd11}),
+            .data_byte ({1'b0, 7'd12}),
             .clk_period (clk_period),
             .rbyte(rbyte)
         );
@@ -291,8 +294,8 @@ module psec6_spi_tb #(
             .clk_period(SPI_CLK_PERIOD),
             .rbyte(rdata)
         );
-        assert(ref_clk_sel == wdata[4:0]) else $error("Reference Clock Select register mismatch: Expected ref_clk_sel=0x%02X (from wdata[4:0]), got ref_clk_sel=0x%02X. Register write/decode may have failed.", wdata[4:0], ref_clk_sel);
-        if (ref_clk_sel == wdata[4:0]) $display("PASS: Reference Clock Select register correctly written and read: 0x%02X", ref_clk_sel);
+        assert(ref_clk_sel == wdata[2:0]) else $error("Reference Clock Select register mismatch: Expected ref_clk_sel=0x%02X (from wdata[2:0]), got ref_clk_sel=0x%02X. Register write/decode may have failed.", wdata[2:0], ref_clk_sel);
+        if (ref_clk_sel == wdata[2:0]) $display("PASS: Reference Clock Select register correctly written and read: 0x%02X", ref_clk_sel);
         assert(rdata == wdata) else $error("SPI readback data mismatch: Expected rdata=0x%02X (original wdata), got rdata=0x%02X. SPI read operation or register storage failed.", wdata, rdata);
         if (rdata == wdata) $display("PASS: SPI readback data matches written data: 0x%02X", rdata);
 
@@ -350,6 +353,25 @@ module psec6_spi_tb #(
         );
         assert(pll_switch == wdata[0]) else $error("PLL Switch register mismatch: Expected pll_switch=0x%02X (from wdata[0]), got pll_switch=0x%02X. Register write/decode may have failed.", wdata[0], pll_switch);
         if (pll_switch == wdata[0]) $display("PASS: PLL Switch register correctly written and read: 0x%02X", pll_switch);
+        assert(rdata == wdata) else $error("SPI readback data mismatch: Expected rdata=0x%02X (original wdata), got rdata=0x%02X. SPI read operation or register storage failed.", wdata, rdata);
+        if (rdata == wdata) $display("PASS: SPI readback data matches written data: 0x%02X", rdata);
+
+        //TEST POINT CONTROL
+        wdata = 8'h0f;
+        write_data (
+            .addr (7'd10),
+            .wdata (wdata),
+            .clk_period (SPI_CLK_PERIOD),
+            .rbyte (rdata)
+        );
+
+        read_data (
+            .addr(7'd10),
+            .clk_period(SPI_CLK_PERIOD),
+            .rbyte(rdata)
+        );
+        assert(test_point_control == wdata) else $error("Test Point Control register mismatch: Expected test_point_control=0x%02X (from wdata), got test_point_control=0x%02X. Register write/decode may have failed.", wdata, test_point_control);
+        if (test_point_control == wdata) $display("PASS: Test Point Control register correctly written and read: 0x%02X", test_point_control);
         assert(rdata == wdata) else $error("SPI readback data mismatch: Expected rdata=0x%02X (original wdata), got rdata=0x%02X. SPI read operation or register storage failed.", wdata, rdata);
         if (rdata == wdata) $display("PASS: SPI readback data matches written data: 0x%02X", rdata);
 

@@ -16,3 +16,5 @@ Debug Log:
 
 To-do:
 - Verify the full system (carefully)
+- Add a decoder for ref_clk_sel such that only one clock is active at a time
+- Add a register to control a muxed "test point"

@@ -17,13 +17,19 @@ module ch_spi_readout (
     logic [2:0] ser_pos;
     logic [55:0] ctmp;
 
-    always_ff @(posedge INST_READOUT) begin
-        ctmp <= {<<{3'b000, trigger_cnt, CE, CD, CC, CB, CA}}; //56 bits total. streamed to be backward here to later be MSB to LSB
+    always_ff @(posedge INST_READOUT or negedge RSTB) begin
+        if (!RSTB) begin
+            ctmp <= '0;
+        end
+        else begin
+            ctmp <= {<<{3'b000, trigger_cnt, CE, CD, CC, CB, CA}}; //56 bits total. streamed to be backward here to later be MSB to LSB
+        end
     end
 
 
-    always_ff @(posedge SPI_CLK, negedge RSTB) begin
+    always_ff @(posedge SPI_CLK or negedge RSTB) begin
         if (!RSTB) begin
+            CNT_SER <= 0;
             ser_pos <= 0;
         end
         else begin //Default behavior when SPI_CLK is high

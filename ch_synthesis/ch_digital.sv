@@ -59,94 +59,18 @@ module PSEC5_CH_DIGITAL (
         .start4 (start4)
     );
 
-    //STOP_REQUEST is or'd from each channel to trigger out
-    always_ff @(posedge trigger, posedge INST_START) begin
-        if (INST_START) begin
-            STOP_REQUEST <= 0;
-        end
-        else begin
-            STOP_REQUEST <= 1;
-        end
-    end
+    ch_state_machine state_machine (
+        .trigger (trigger),
+        .INST_START (INST_START),
+        .INST_STOP (INST_STOP),
+        .INST_READOUT (INST_READOUT),
+        .RSTB (RSTB),
+        .MODE (MODE),
 
-    always_ff @(posedge trigger, negedge RSTB, posedge start1, posedge start2, posedge start4, posedge INST_STOP, posedge INST_READOUT) begin
-        if (!RSTB) begin
-            current_state <= STATE_INIT;
-        end
-        else if (start1) begin 
-            current_state <= STATE_SAMPLING_A;
-            trigger_cnt <= 3'b0;
-        end
-        else if (start2) begin 
-            current_state <= STATE_SAMPLING_A_AND_B; 
-            trigger_cnt <= 3'b0;
-        end
-        else if (start4) begin 
-            current_state <= STATE_SAMPLING_ALL;
-            trigger_cnt <= 3'b0;
-        end
-        else if (INST_STOP) begin //stop when the controller sends a trigger in
-            current_state <= STATE_STOPPED;
-        end
-        else if (INST_READOUT) begin //prepare readout when SPI sends readout instruction
-            current_state <= STATE_READOUT;
-        end
-        else begin //trigger rising edge, meaning discriminator fired
-            case (current_state)
-                STATE_SAMPLING_A: begin //starting with 1 fast buffer per event setting (MODE = 00)
-                    // If the discriminator output is present, start sampling the next fast buffer.
-                    current_state <= STATE_SAMPLING_B;
-                    trigger_cnt <= 3'b001;
-                end
-                STATE_SAMPLING_B: begin
-                    // If the discriminator output is present, start sampling the next fast buffer.
-                    current_state <= STATE_SAMPLING_C;
-                    trigger_cnt <= 3'b010;
-                end
-                STATE_SAMPLING_C: begin
-                    // If the discriminator output is present, start sampling the next fast buffer.
-                    current_state <= STATE_SAMPLING_D;
-                    trigger_cnt <= 3'b011;
-                end
-                STATE_SAMPLING_D: begin
-                    // If the discriminator output is present, finish sampling the fast buffers but keep sampling the slow buffer.
-                    current_state <= STATE_SAMPLING_E;
-                    trigger_cnt <= 3'b100;
-                end
-                STATE_SAMPLING_A_AND_B: begin //starting with 2 fast buffers per event setting (MODE = 01)
-                    // If the discriminator output is present, start sampling the next two fast buffers.
-                    current_state <= STATE_SAMPLING_C_AND_D;
-                    trigger_cnt <= 3'b001;
-                end
-                STATE_SAMPLING_C_AND_D: begin
-                    // If the discriminator output is present, finish sampling the fast buffers but keep sampling the slow buffer.
-                    current_state <= STATE_SAMPLING_E;
-                    trigger_cnt <= 3'b010;
-                end
-                STATE_SAMPLING_ALL: begin //starting with 4 fast buffers per event setting (MODE = 11)
-                    // If the discriminator output is present, finish sampling the fast buffers but keep sampling the slow buffer.
-                    current_state <= STATE_SAMPLING_E;
-                    trigger_cnt <= 3'b001;
-                end
-                STATE_INIT: begin
-                    current_state <= STATE_INIT;
-                end
-                STATE_READOUT: begin
-                    current_state <= STATE_READOUT;
-                end
-                STATE_STOPPED: begin
-                    current_state <= STATE_STOPPED;
-                end
-                STATE_SAMPLING_E: begin
-                    //this state is reached when the fast buffers are done sampling. The state machine will stay in this state until a stop command is given.
-                    current_state <= STATE_SAMPLING_E;
-                end
-                default: begin //defaults to stopped, though this should never be reached
-                    current_state <= STATE_STOPPED;
-                end
-            endcase
-        end
-    end
+        .STOP_REQUEST (STOP_REQUEST),
+        .current_state (current_state),
+        .trigger_cnt (trigger_cnt)
+    );
 
     //readout of the timestamps and trigger_cnt on the SPI
     ch_spi_readout spi_readout (
@@ -165,158 +89,19 @@ module PSEC5_CH_DIGITAL (
         .CNT_SER (CNT_SER)
     );
 
-    always_comb begin
-        //Update the control latches based on the current state.
-        case (current_state)
-        STATE_INIT:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 1;
-                TRIGGERCC = 1;
-                TRIGGERD = 1;
-                TRIGGERDC = 1;
-                TRIGGERE = 1;
-            end
-        STATE_STOPPED:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 1;
-                TRIGGERCC = 1;
-                TRIGGERD = 1;
-                TRIGGERDC = 1;
-                TRIGGERE = 1;
-            end
-        STATE_READOUT:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 1;
-                TRIGGERCC = 1;
-                TRIGGERD = 1;
-                TRIGGERDC = 1;
-                TRIGGERE = 1;
-            end
-        STATE_SAMPLING_A:
-            begin
-                TRIGGERA = 0;
-                TRIGGERAC = 0;
-                TRIGGERB = 1;
-                TRIGGERBC = 0;
-                TRIGGERC = 1;
-                TRIGGERCC = 0;
-                TRIGGERD = 1;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_B:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 0;
-                TRIGGERBC = 0;
-                TRIGGERC = 1;
-                TRIGGERCC = 0;
-                TRIGGERD = 1;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_C:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 0;
-                TRIGGERCC = 0;
-                TRIGGERD = 1;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_D:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 1;
-                TRIGGERCC = 1;
-                TRIGGERD = 0;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_E:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 1;
-                TRIGGERCC = 1;
-                TRIGGERD = 1;
-                TRIGGERDC = 1;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_A_AND_B:
-            begin
-                TRIGGERA = 0;
-                TRIGGERAC = 0;
-                TRIGGERB = 0;
-                TRIGGERBC = 0;
-                TRIGGERC = 1;
-                TRIGGERCC = 0;
-                TRIGGERD = 1;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_C_AND_D:
-            begin
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 0;
-                TRIGGERCC = 0;
-                TRIGGERD = 0;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        STATE_SAMPLING_ALL:
-         begin
-                TRIGGERA = 0;
-                TRIGGERAC = 0;
-                TRIGGERB = 0;
-                TRIGGERBC = 0;
-                TRIGGERC = 0;
-                TRIGGERCC = 0;
-                TRIGGERD = 0;
-                TRIGGERDC = 0;
-                TRIGGERE = 0;
-            end
-        default: // Handle any other states if necessary
-            begin
-                // Default behavior
-                TRIGGERA = 1;
-                TRIGGERAC = 1;
-                TRIGGERB = 1;
-                TRIGGERBC = 1;
-                TRIGGERC = 1;
-                TRIGGERCC = 1;
-                TRIGGERD = 1;
-                TRIGGERDC = 1;
-                TRIGGERE = 1;
-            end
+    //controls the trigger mask based on the state
+    ch_state_decoder trigger_mask_gen (
+        .current_state (current_state),
 
-        endcase
-    end
-
-
+        .TRIGGERA (TRIGGERA),
+        .TRIGGERAC (TRIGGERAC),
+        .TRIGGERB (TRIGGERB),
+        .TRIGGERBC (TRIGGERBC),
+        .TRIGGERC (TRIGGERC),
+        .TRIGGERCC (TRIGGERCC),
+        .TRIGGERD (TRIGGERD),
+        .TRIGGERDC (TRIGGERDC),
+        .TRIGGERE (TRIGGERE)
+    );
 
 endmodule

@@ -1,4 +1,4 @@
-package types_pkg
+package types_pkg;
     typedef enum logic [3:0] {
             STATE_INIT, // All counters are reset to 0 and stopped, and all SCAs are stopped.
             STATE_STOPPED, // All SCAs and counters are stopped, but the counters are left at their current value.

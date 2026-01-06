@@ -4,7 +4,7 @@ module ch_state_decoder (
     // Input
     input state_t current_state,
     
-    // Outputs
+    //Triggers for buffers, A-D fast, E slow. Active Low signals
     output logic TRIGGERA,
     output logic TRIGGERAC,
     output logic TRIGGERB,
@@ -16,7 +16,7 @@ module ch_state_decoder (
     output logic TRIGGERE
 );
 
-    // Control latch decoder logic
+    //Control latch decoder logic 
     always_comb begin
         // Update the control latches based on the current state
         case (current_state)

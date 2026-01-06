@@ -3,7 +3,7 @@ Fixes for new submission:
 ~~2) Reorder the addressing scheme so all R registers are at the end~~
 ~~3) Add a non-destructive read mode by using the MSB of the address (1 = is_write)~~
 ~~4) Remove any reliance on iclk~~
-5) Fix the mux output scheme such that it doesn't drop bits on transition
+~~5) Fix the mux output scheme such that it doesn't drop bits on transition~~
 ~~6) Fix writing so that it doesn't double write~~
 ~~7) Rewrite the instruction driver~~
 ~~8) Add an SR (inst_start/inst_stop) latch for clk_enable~~
@@ -16,5 +16,8 @@ Debug Log:
 
 To-do:
 - Verify the full system (carefully)
-- Add a decoder for ref_clk_sel such that only one clock is active at a time
-- Add a register to control a muxed "test point"
+- synthesize all relevant blocks and check timing
+- Implement tp_mux decoder
+- Implement the vtune switch from the SPI
+- Think of duty-cycle spec (tentatively \pm 5%?)
+- Test PLL pss and tran_noise

@@ -13,56 +13,67 @@ module ch_state_machine (
     output logic [2:0] trigger_cnt //how many triggers happened, up to max number of events capturable in a given mode (ex: max = 4 for mode = MODE_SAMPLE1)
 );
 
-    state_t next_state; 
-
-    //state machine using trigger as clock, 4 async resets, and combinational logic for moving forward
-    always_comb begin
-        if (!RSTB) next_state = STATE_INIT;
-        else if (INST_READOUT) next_state = STATE_READOUT;
-        else if (INST_STOP) next_state = STATE_STOPPED;
+    //large state machine, large sensitivity list is okay since these signals are mutually exclusive
+    always_ff @(posedge trigger, posedge INST_START, posedge INST_STOP, posedge INST_READOUT, negedge RSTB) begin
+        if (!RSTB) begin
+            current_state <= STATE_INIT;
+            trigger_cnt <= '0;
+        end
+        else if (INST_READOUT) begin
+            current_state <= STATE_READOUT;
+            // trigger_cnt and STOP_REQUEST hold their values
+        end
+        else if (INST_STOP) begin
+            current_state <= STATE_STOPPED;
+            // trigger_cnt and STOP_REQUEST hold their values
+        end
         else if (INST_START) begin
-            case (MODE) 
-                MODE_SAMPLE1: next_state = STATE_SAMPLING_A;
-                MODE_SAMPLE2: next_state = STATE_SAMPLING_A_AND_B;
-                MODE_SAMPLE4: next_state = STATE_SAMPLING_ALL;
-                default: next_state = STATE_SAMPLING_ALL; //defaults to using all 4 fast buffers on one event
+            case (MODE)
+                MODE_SAMPLE1: current_state <= STATE_SAMPLING_A;
+                MODE_SAMPLE2: current_state <= STATE_SAMPLING_A_AND_B;
+                MODE_SAMPLE4: current_state <= STATE_SAMPLING_ALL;
+                default: current_state <= STATE_SAMPLING_ALL;
             endcase
+            trigger_cnt <= '0;
         end
         else if (trigger) begin
-            case (current_state) 
-                STATE_SAMPLING_A: next_state = STATE_SAMPLING_B; //1 fast buff per event path
-                STATE_SAMPLING_B: next_state = STATE_SAMPLING_C;
-                STATE_SAMPLING_C: next_state = STATE_SAMPLING_D;
-                STATE_SAMPLING_D: next_state = STATE_SAMPLING_E;
-
-                STATE_SAMPLING_A_AND_B: next_state = STATE_SAMPLING_C_AND_D; //2 fast buff per event path
-                STATE_SAMPLING_C_AND_D: next_state = STATE_SAMPLING_E;
-
-                STATE_SAMPLING_ALL: next_state = STATE_SAMPLING_E; //4 fast buff per event path
+            // Only advance if we're in a sampling state
+            case (current_state)
+                STATE_SAMPLING_A: begin
+                    current_state <= STATE_SAMPLING_B;
+                    trigger_cnt <= 3'd1;
+                end
+                STATE_SAMPLING_B: begin
+                    current_state <= STATE_SAMPLING_C;
+                    trigger_cnt <= 3'd2;
+                end
+                STATE_SAMPLING_C: begin
+                    current_state <= STATE_SAMPLING_D;
+                    trigger_cnt <= 3'd3;
+                end
+                STATE_SAMPLING_D: begin
+                    current_state <= STATE_SAMPLING_E;
+                    trigger_cnt <= 3'd4;
+                end
+                STATE_SAMPLING_A_AND_B: begin
+                    current_state <= STATE_SAMPLING_C_AND_D;
+                    trigger_cnt <= 3'd1;
+                end
+                STATE_SAMPLING_C_AND_D: begin
+                    current_state <= STATE_SAMPLING_E;
+                    trigger_cnt <= 3'd2;
+                end
+                STATE_SAMPLING_ALL: begin
+                    current_state <= STATE_SAMPLING_E;
+                    trigger_cnt <= 3'd1;
+                end
+                // In other states, trigger does nothing
+                default: begin
+                    current_state <= current_state;
+                    trigger_cnt <= trigger_cnt + 1;
+                end
             endcase
         end
-        else begin //defaults to current state
-            next_state = current_state;
-        end
-    end
-
-    always_ff @(posedge trigger, negedge RSTB, posedge INST_READOUT, posedge INST_STOP, posedge INST_START) begin //long sensitivity list?
-        current_state <= next_state;
-
-        //infering trigger count based on the state
-        case (next_state) 
-            STATE_SAMPLING_A: trigger_cnt = '0; //when started sampling, no triggers
-            STATE_SAMPLING_A_AND_B: trigger_cnt = '0;
-            STATE_SAMPLING_ALL: trigger_cnt = '0;
-
-            STATE_SAMPLING_B: trigger_cnt = 3'd1; //1 fast buff per event path
-            STATE_SAMPLING_C: trigger_cnt = 3'd2;
-            STATE_SAMPLING_D: trigger_cnt = 3'd3;
-
-            STATE_SAMPLING_C_AND_D: trigger_cnt = 3'd1; //2 fast buff per event path
-
-            STATE_SAMPLING_E: trigger_cnt = trigger_cnt + 1; //last step in all paths
-        endcase
     end
 
     //STOP_REQUEST is or'd from each channel to trigger out

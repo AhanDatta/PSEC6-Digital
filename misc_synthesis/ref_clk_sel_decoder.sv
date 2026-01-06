@@ -1,12 +1,12 @@
 module ref_clk_sel_decoder (
-    input logic rst,
+    input logic rstn,
     input logic [2:0] ref_clk_sel,
 
     output logic [4:0] tgate_control //lowest order bit = 512. In order, enables for {32, 64, 128, 256, 512}
 );
 
     always_comb begin
-        if (rst) begin
+        if (!rstn) begin
             tgate_control = 5'b00010;
         end
         else begin

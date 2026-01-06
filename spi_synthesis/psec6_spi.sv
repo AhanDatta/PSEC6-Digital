@@ -1,9 +1,9 @@
 module psec6_spi (
     //external inputs
-    input logic rstn,
+    input logic rstn, //chip-wide reset
     input logic spi_clk,
     input logic pico,
-    input logic cs,
+    input logic cs, //spi specific reset
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
 
     //internal signal input

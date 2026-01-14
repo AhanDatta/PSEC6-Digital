@@ -61,11 +61,12 @@ module PSEC5_CH_DIGITAL (
 
     ch_state_machine state_machine (
         .trigger (trigger),
-        .INST_START (INST_START),
+        .start1 (start1),
+        .start2 (start2),
+        .start4 (start4),
         .INST_STOP (INST_STOP),
         .INST_READOUT (INST_READOUT),
         .RSTB (RSTB),
-        .MODE (MODE),
 
         .STOP_REQUEST (STOP_REQUEST),
         .current_state (current_state),

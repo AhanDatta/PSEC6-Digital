@@ -19,5 +19,4 @@ To-do:
 - synthesize all relevant blocks and check timing
 - Implement tp_mux decoder
 - Implement the vtune switch from the SPI
-- Think of duty-cycle spec (tentatively \pm 5%?)
 - Test PLL pss and tran_noise

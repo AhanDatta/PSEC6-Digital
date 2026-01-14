@@ -12,8 +12,6 @@ module psec6_spi_tb #(
     logic cs;
     logic trigger_in;
 
-    logic pll_locked;
-
     logic poci_spi;
 
     logic [7:0] test_point_control;
@@ -24,6 +22,7 @@ module psec6_spi_tb #(
     logic [2:0] ref_clk_sel; //address 6
     logic slow_mode; //address 7
     logic pll_switch; //address 9; activates on-chip pll
+    logic [7:0] lpf_resistor_sel; //address 11; contorls loop filter resistors
 
     //output to channel digital
     logic [7:0] trigger_channel_mask; //address 2
@@ -48,8 +47,6 @@ module psec6_spi_tb #(
         .cs (cs),
         .trigger_in (trigger_in),
 
-        .pll_locked (pll_locked),
-
         .poci_spi (poci_spi),
 
         .clk_enable (clk_enable),
@@ -58,6 +55,7 @@ module psec6_spi_tb #(
         .slow_mode (slow_mode),
         .pll_switch (pll_switch),
         .test_point_control (test_point_control),
+        .lpf_resistor_sel (lpf_resistor_sel),
 
         .trigger_channel_mask (trigger_channel_mask),
         .mode (mode),
@@ -185,7 +183,6 @@ module psec6_spi_tb #(
 
     initial begin
         //initialization and reset
-        pll_locked = 1;
         trigger_in = 0;
         rstn = 1;
         spi_clk = 0;

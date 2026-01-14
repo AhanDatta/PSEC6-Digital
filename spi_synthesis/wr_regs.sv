@@ -1,16 +1,17 @@
 module wr_regs #(
-    parameter integer NUM_WR_REGS = 10,
+    parameter integer NUM_WR_REGS = 11,
     //reset values, see overleaf for descriptions
     parameter logic [7:0] VCO_DIGITAL_BAND_RST_VAL = 8'h3f,
     parameter logic [7:0] TRIGGER_CHANNEL_MASK_RST_VAL = 8'hff,
     parameter logic [7:0] INSTRUCTION_RST_VAL = 8'h00,
     parameter logic [7:0] MODE_RST_VAL = 8'h03,
     parameter logic [7:0] DISC_POLARITY_RST_VAL = 8'hff,
-    parameter logic [7:0] REF_CLK_SEL_RST_VAL = 8'h01,
+    parameter logic [7:0] REF_CLK_SEL_RST_VAL = 8'h04,
     parameter logic [7:0] SLOW_MODE_RST_VAL = 8'h00,
     parameter logic [7:0] TRIGGER_DELAY_RST_VAL = 8'h00,
     parameter logic [7:0] PLL_SWITCH_RST_VAL = 8'h01,
-    parameter logic [7:0] TEST_POINT_CONTROL_RST_VAL = 8'h00
+    parameter logic [7:0] TEST_POINT_CONTROL_RST_VAL = 8'h00,
+    parameter logic [7:0] LPF_RESISTOR_SEL_RST_VAL = 8'haa;
 ) (
     input logic spi_clk,
     input logic cs,
@@ -18,7 +19,6 @@ module wr_regs #(
     input logic is_write,
     input logic [6:0] addr,
     input logic [7:0] wdata,
-    input logic pll_locked, //address 11, comes from pll block, read only
 
     output logic [5:0] vco_digital_band, //address 1
     output logic [7:0] trigger_channel_mask, //address 2
@@ -30,6 +30,7 @@ module wr_regs #(
     output logic [5:0] trigger_delay, //address 8
     output logic pll_switch, //address 9, activates on-chip pll
     output logic [7:0] test_point_control, //address 10, choses test point
+    output loigic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
 
     output logic poci_spi
 );
@@ -51,7 +52,7 @@ module wr_regs #(
     logic [7:0] int_trigger_delay; 
     logic [7:0] int_pll_switch; 
     logic [7:0] int_test_point_control;
-    logic [7:0] int_pll_locked; 
+    logic [7:0] int_lpf_resistor_sel; 
 
     //previous addresses to facilitate writing
     logic [6:0] addr_one;
@@ -83,7 +84,7 @@ module wr_regs #(
         trigger_delay = int_trigger_delay[5:0];        
         pll_switch = int_pll_switch[0];  
         test_point_control = int_test_point_control;
-        int_pll_locked = {7'b0, pll_locked};             
+        lpf_resistor_sel = int_lpf_resistor_sel;             
     end 
 
     //clock counter for spi_clk to create latch
@@ -107,16 +108,17 @@ module wr_regs #(
     //generate the correct latch based on the address
     always_comb begin
         unique case (addr_two)
-            7'd1: data_reg_addr_latch_signal = 'b00_0000_0001; //vco_digital_band
-            7'd2: data_reg_addr_latch_signal = 'b00_0000_0010; //trigger_channel_mask
-            7'd3: data_reg_addr_latch_signal = 'b00_0000_0100; //instruction
-            7'd4: data_reg_addr_latch_signal = 'b00_0000_1000; //mode
-            7'd5: data_reg_addr_latch_signal = 'b00_0001_0000; //disc_polarity
-            7'd6: data_reg_addr_latch_signal = 'b00_0010_0000; //ref_clk_sel
-            7'd7: data_reg_addr_latch_signal = 'b00_0100_0000; //slow_mode
-            7'd8: data_reg_addr_latch_signal = 'b00_1000_0000; //trigger_delay
-            7'd9: data_reg_addr_latch_signal = 'b01_0000_0000; //pll_switch
-            7'd10: data_reg_addr_latch_signal = 'b10_0000_0000; //test point control
+            7'd1: data_reg_addr_latch_signal = 'b000_0000_0001; //vco_digital_band
+            7'd2: data_reg_addr_latch_signal = 'b000_0000_0010; //trigger_channel_mask
+            7'd3: data_reg_addr_latch_signal = 'b000_0000_0100; //instruction
+            7'd4: data_reg_addr_latch_signal = 'b000_0000_1000; //mode
+            7'd5: data_reg_addr_latch_signal = 'b000_0001_0000; //disc_polarity
+            7'd6: data_reg_addr_latch_signal = 'b000_0010_0000; //ref_clk_sel
+            7'd7: data_reg_addr_latch_signal = 'b000_0100_0000; //slow_mode
+            7'd8: data_reg_addr_latch_signal = 'b000_1000_0000; //trigger_delay
+            7'd9: data_reg_addr_latch_signal = 'b001_0000_0000; //pll_switch
+            7'd10: data_reg_addr_latch_signal = 'b010_0000_0000; //test point control
+            7'd11: data_reg_addr_latch_signal = 'b100_0000_0000; //loop filter resistor control
             default: data_reg_addr_latch_signal = '0;
         endcase
     end
@@ -141,7 +143,7 @@ module wr_regs #(
                 7'd8: rdata <= int_trigger_delay;
                 7'd9: rdata <= int_pll_switch;
                 7'd10: rdata <= int_test_point_control;
-                7'd11: rdata <= int_pll_locked;
+                7'd11: rdata <= int_lpf_resistor_sel;
                 default: rdata <= '0;
             endcase
         end
@@ -172,4 +174,5 @@ module wr_regs #(
     latched_rw_reg trigger_delay_reg (.rstn (rstn), .reset_val (TRIGGER_DELAY_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[7]), .stored_data(int_trigger_delay));
     latched_rw_reg pll_switch_reg (.rstn (rstn), .reset_val (PLL_SWITCH_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[8]), .stored_data(int_pll_switch));
     latched_rw_reg test_point_control_reg (.rstn (rstn), .reset_val (TEST_POINT_CONTROL_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[9]), .stored_data(int_test_point_control));
+    latched_rw_reg lpf_resistor_sel_reg (.rstn(rstn), .reset_val(LPF_RESISTOR_SEL_RST_VAL), .data(wdata), .data_reg_latch_signal[10], .stored_data(int_lpf_resistor_sel));
 endmodule

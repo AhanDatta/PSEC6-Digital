@@ -6,9 +6,6 @@ module psec6_spi (
     input logic cs, //spi specific reset
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
 
-    //internal signal input
-    input logic pll_locked, //read from address 11
-
     //output to readout mux
     output logic poci_spi,
 
@@ -21,6 +18,7 @@ module psec6_spi (
     output logic [2:0] ref_clk_sel, //address 6
     output logic slow_mode, //address 7
     output logic pll_switch, //address 9, activates on-chip pll
+    output loigic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
 
     //output to channel digital
     output logic [7:0] trigger_channel_mask, //address 2
@@ -59,7 +57,6 @@ module psec6_spi (
         .is_write (is_write),
         .addr (addr),
         .wdata (wdata),
-        .pll_locked (pll_locked),
 
         .vco_digital_band (vco_digital_band),
         .trigger_channel_mask (trigger_channel_mask),
@@ -71,6 +68,7 @@ module psec6_spi (
         .trigger_delay (trigger_delay),
         .pll_switch (pll_switch),
         .test_point_control (test_point_control),
+        .lpf_resistor_sel (lpf_resistor_sel),
 
         .poci_spi (poci_spi)
     );

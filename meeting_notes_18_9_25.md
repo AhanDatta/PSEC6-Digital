@@ -57,8 +57,6 @@ Questions:
 
 todo:
 - Make LPF tunable
-- Add buffer between CP and VCO (VCO and cp coupling)
-- Try using standard FF cell for PFD
 - Use a CP topology that minimizes coupling between input and output
 - Find Kvco using parameter sweep steady state
 - Post layout verification of VCO and PLL

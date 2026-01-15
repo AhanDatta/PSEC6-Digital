@@ -1,25 +1,25 @@
 import types_pkg::*;
 
 module PSEC5_CH_DIGITAL (
-    input logic INST_START,
-    input logic INST_STOP,
-    input logic INST_READOUT,
-    input logic RSTB,
+    input logic INST_START, //From SPI
+    input logic INST_STOP, //From the trig_in pin
+    input logic INST_READOUT, //From SPI
+    input logic RSTB, //Full chip reset
     input logic DISCRIMINATOR_OUTPUT, // This is the unsync'ed input from the discriminator, which is in the analog part of the PSEC5.
-    input logic SPI_CLK, //moved some of the spi shift registers into this module, for the sake of speed and simplicity.
-    input logic [9:0] CA, //These are counter values.
+    input logic SPI_CLK, //moved some of the spi shift registers into this module, for the sake of speed and simplicity. 40 MHz
+    input logic [9:0] CA, //These are counter values from analog ch of when the triggers are fired
     input logic [9:0] CB,
     input logic [9:0] CC,
     input logic [9:0] CD,
     input logic [9:0] CE,
-    input smode_t MODE,
-    input logic DISCRIMINATOR_POLARITY,
-    input logic [2:0] SELECT_REG,
-    input logic [4:0] TRIG_DELAY,
-    input logic FCLK, //gated on clk_enable from SPI, which is an SR latch (INST_START/INST_STOP)
-    //final trigger outputs of the module must be sync to FCLK (5GHz clock) to avoid metastability issues. This is not implemented in this module yet.
-    output logic STOP_REQUEST,
-    output logic TRIGGERA,
+    input smode_t MODE, //Comes from the SPI, set before sampling start command sent
+    input logic DISCRIMINATOR_POLARITY, //Comes from SPI, set before sampling
+    input logic [2:0] SELECT_REG, //Comes from SPI during readout
+    input logic [4:0] TRIG_DELAY, //Comes from SPI, set before sampling
+    input logic FCLK, //gated on clk_enable from SPI, which is an SR latch (INST_START/INST_STOP). 5 GHz
+    //final trigger outputs of the module must be sync to FCLK (5GHz clock) to avoid metastability issues. Adds at most 0.4ns propogation delay
+    output logic STOP_REQUEST, //Flag for a trigger happening
+    output logic TRIGGERA, //Sent to the analog channel to start the fast buffers
     output logic TRIGGERB,
     output logic TRIGGERC,
     output logic TRIGGERD,
@@ -28,7 +28,7 @@ module PSEC5_CH_DIGITAL (
     output logic TRIGGERBC,
     output logic TRIGGERCC,
     output logic TRIGGERDC,
-    output logic CNT_SER
+    output logic CNT_SER //Output sent to the readout mux
 );  
     state_t current_state;
     logic start1;
@@ -36,6 +36,17 @@ module PSEC5_CH_DIGITAL (
     logic start4;
     logic trigger;
     logic [2:0] trigger_cnt; //# of legitimate trigger fires. 
+
+    // Unsynchronized trigger outputs from state decoder
+    logic TRIGGERA_ASYNC;
+    logic TRIGGERB_ASYNC;
+    logic TRIGGERC_ASYNC;
+    logic TRIGGERD_ASYNC;
+    logic TRIGGERE_ASYNC;
+    logic TRIGGERAC_ASYNC;
+    logic TRIGGERBC_ASYNC;
+    logic TRIGGERCC_ASYNC;
+    logic TRIGGERDC_ASYNC;
 
     //generates triggers after 32 clock cycles of FCLK, according to polarity and raw discriminator output
     ch_trigger_gen trigger_gen (
@@ -94,15 +105,79 @@ module PSEC5_CH_DIGITAL (
     ch_state_decoder trigger_mask_gen (
         .current_state (current_state),
 
-        .TRIGGERA (TRIGGERA),
-        .TRIGGERAC (TRIGGERAC),
-        .TRIGGERB (TRIGGERB),
-        .TRIGGERBC (TRIGGERBC),
-        .TRIGGERC (TRIGGERC),
-        .TRIGGERCC (TRIGGERCC),
-        .TRIGGERD (TRIGGERD),
-        .TRIGGERDC (TRIGGERDC),
-        .TRIGGERE (TRIGGERE)
+        .TRIGGERA (TRIGGERA_ASYNC),
+        .TRIGGERAC (TRIGGERAC_ASYNC),
+        .TRIGGERB (TRIGGERB_ASYNC),
+        .TRIGGERBC (TRIGGERBC_ASYNC),
+        .TRIGGERC (TRIGGERC_ASYNC),
+        .TRIGGERCC (TRIGGERCC_ASYNC),
+        .TRIGGERD (TRIGGERD_ASYNC),
+        .TRIGGERDC (TRIGGERDC_ASYNC),
+        .TRIGGERE (TRIGGERE_ASYNC)
+    );
+
+    // Two-stage synchronizers for all trigger outputs
+    trigger_synchronizer sync_triggera (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERA_ASYNC),
+        .trigger_sync (TRIGGERA)
+    );
+
+    trigger_synchronizer sync_triggerb (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERB_ASYNC),
+        .trigger_sync (TRIGGERB)
+    );
+
+    trigger_synchronizer sync_triggerc (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERC_ASYNC),
+        .trigger_sync (TRIGGERC)
+    );
+
+    trigger_synchronizer sync_triggerd (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERD_ASYNC),
+        .trigger_sync (TRIGGERD)
+    );
+
+    trigger_synchronizer sync_triggere (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERE_ASYNC),
+        .trigger_sync (TRIGGERE)
+    );
+
+    trigger_synchronizer sync_triggerac (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERAC_ASYNC),
+        .trigger_sync (TRIGGERAC)
+    );
+
+    trigger_synchronizer sync_triggerbc (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERBC_ASYNC),
+        .trigger_sync (TRIGGERBC)
+    );
+
+    trigger_synchronizer sync_triggercc (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERCC_ASYNC),
+        .trigger_sync (TRIGGERCC)
+    );
+
+    trigger_synchronizer sync_triggerdc (
+        .FCLK (FCLK),
+        .RSTB (RSTB),
+        .trigger_async (TRIGGERDC_ASYNC),
+        .trigger_sync (TRIGGERDC)
     );
 
 endmodule

@@ -16,9 +16,10 @@ package types_pkg;
             STATE_READOUT // load the counter data and trigger count into the output shift register
         } state_t;
 
+    //This has to agree with the SPI convention
     typedef enum logic [1:0] {
-        MODE_SAMPLE1 = 2'b0,
-        MODE_SAMPLE2 = 2'b01,
+        MODE_SAMPLE1 = 2'b01,
+        MODE_SAMPLE2 = 2'b10,
         MODE_SAMPLE4 = 2'b11
     } smode_t;
 endpackage

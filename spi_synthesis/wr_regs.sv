@@ -11,7 +11,7 @@ module wr_regs #(
     parameter logic [7:0] TRIGGER_DELAY_RST_VAL = 8'h00,
     parameter logic [7:0] PLL_SWITCH_RST_VAL = 8'h01,
     parameter logic [7:0] TEST_POINT_CONTROL_RST_VAL = 8'h00,
-    parameter logic [7:0] LPF_RESISTOR_SEL_RST_VAL = 8'haa;
+    parameter logic [7:0] LPF_RESISTOR_SEL_RST_VAL = 8'h1f
 ) (
     input logic spi_clk,
     input logic cs,

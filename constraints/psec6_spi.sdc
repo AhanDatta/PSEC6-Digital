@@ -4,7 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-current_design "psec6_spi"
+current_design psec6_spi
 
 # ----------------------------------------------------------------------------
 # Clock Definition
@@ -47,6 +47,9 @@ set output_delay_min [expr 25.0 * 0.1]
 
 set_output_delay -clock spi_clk -max $output_delay_max [get_ports poci_spi]
 set_output_delay -clock spi_clk -min $output_delay_min [get_ports poci_spi]
+
+set_output_delay -clock spi_clk -max $output_delay_max [get_ports {addr[*]}]
+set_output_delay -clock spi_clk -min $output_delay_min [get_ports {addr[*]}]
 
 set_output_delay -clock spi_clk -max $output_delay_max [get_ports {test_point_control[*]}]
 set_output_delay -clock spi_clk -min $output_delay_min [get_ports {test_point_control[*]}]

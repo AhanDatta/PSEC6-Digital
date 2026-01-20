@@ -100,8 +100,8 @@ set_input_transition 0.2 [remove_from_collection [all_inputs] [get_ports {FCLK S
 # ----------------------------------------------------------------------------
 # Output Constraints - FCLK domain (trigger outputs)
 # ----------------------------------------------------------------------------
-set fclk_output_delay_max [expr 0.2 * 0.9]
-set fclk_output_delay_min [expr 0.2 * 0.5]
+set fclk_output_delay_max [expr 0.2 * 0.95]
+set fclk_output_delay_min [expr 0.2 * 0.3]
 
 set_output_delay -clock FCLK -max $fclk_output_delay_max [get_ports TRIGGERA]
 set_output_delay -clock FCLK -min $fclk_output_delay_min [get_ports TRIGGERA]

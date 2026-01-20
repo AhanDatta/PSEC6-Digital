@@ -17,7 +17,8 @@ module PSEC6_CH_DIGITAL (
     input logic [2:0] SELECT_REG, //Comes from SPI during readout
     input logic [4:0] TRIG_DELAY, //Comes from SPI, set before sampling
     input logic FCLK, //gated on clk_enable from SPI, which is an SR latch (INST_START/INST_STOP). 5 GHz
-    //final trigger outputs of the module must be sync to FCLK (5GHz clock) to avoid metastability issues. Adds at most 0.4ns propogation delay
+
+    //Outputs are async, dealt with at analog channel level
     output logic STOP_REQUEST, //Flag for a trigger happening
     output logic TRIGGERA, //Sent to the analog channel to start the fast buffers
     output logic TRIGGERB,
@@ -36,17 +37,6 @@ module PSEC6_CH_DIGITAL (
     logic start4;
     logic trigger;
     logic [2:0] trigger_cnt; //# of legitimate trigger fires. 
-
-    // Unsynchronized trigger outputs from state decoder
-    logic TRIGGERA_ASYNC;
-    logic TRIGGERB_ASYNC;
-    logic TRIGGERC_ASYNC;
-    logic TRIGGERD_ASYNC;
-    logic TRIGGERE_ASYNC;
-    logic TRIGGERAC_ASYNC;
-    logic TRIGGERBC_ASYNC;
-    logic TRIGGERCC_ASYNC;
-    logic TRIGGERDC_ASYNC;
 
     //generates triggers after 32 clock cycles of FCLK, according to polarity and raw discriminator output
     ch_trigger_gen trigger_gen (
@@ -106,79 +96,15 @@ module PSEC6_CH_DIGITAL (
     ch_state_decoder trigger_mask_gen (
         .current_state (current_state),
 
-        .TRIGGERA (TRIGGERA_ASYNC),
-        .TRIGGERAC (TRIGGERAC_ASYNC),
-        .TRIGGERB (TRIGGERB_ASYNC),
-        .TRIGGERBC (TRIGGERBC_ASYNC),
-        .TRIGGERC (TRIGGERC_ASYNC),
-        .TRIGGERCC (TRIGGERCC_ASYNC),
-        .TRIGGERD (TRIGGERD_ASYNC),
-        .TRIGGERDC (TRIGGERDC_ASYNC),
-        .TRIGGERE (TRIGGERE_ASYNC)
+        .TRIGGERA (TRIGGERA),
+        .TRIGGERAC (TRIGGERAC),
+        .TRIGGERB (TRIGGERB),
+        .TRIGGERBC (TRIGGERBC),
+        .TRIGGERC (TRIGGERC),
+        .TRIGGERCC (TRIGGERCC),
+        .TRIGGERD (TRIGGERD),
+        .TRIGGERDC (TRIGGERDC),
+        .TRIGGERE (TRIGGERE)
     );
-
-    // One-stage synchronizers for all trigger outputs
-    trigger_synchronizer sync_triggera (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERA_ASYNC),
-        .trigger_sync (TRIGGERA)
-    );
-
-    trigger_synchronizer sync_triggerb (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERB_ASYNC),
-        .trigger_sync (TRIGGERB)
-    );
-
-    trigger_synchronizer sync_triggerc (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERC_ASYNC),
-        .trigger_sync (TRIGGERC)
-    );
-
-    trigger_synchronizer sync_triggerd (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERD_ASYNC),
-        .trigger_sync (TRIGGERD)
-    );
-
-    trigger_synchronizer sync_triggere (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERE_ASYNC),
-        .trigger_sync (TRIGGERE)
-    );
-
-    trigger_synchronizer sync_triggerac (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERAC_ASYNC),
-        .trigger_sync (TRIGGERAC)
-    );
-
-    trigger_synchronizer sync_triggerbc (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERBC_ASYNC),
-        .trigger_sync (TRIGGERBC)
-    );
-
-    trigger_synchronizer sync_triggercc (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERCC_ASYNC),
-        .trigger_sync (TRIGGERCC)
-    );
-
-    trigger_synchronizer sync_triggerdc (
-        .FCLK (FCLK),
-        .RSTB (RSTB),
-        .trigger_async (TRIGGERDC_ASYNC),
-        .trigger_sync (TRIGGERDC)
-    );
-
+    
 endmodule

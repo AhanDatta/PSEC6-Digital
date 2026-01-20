@@ -4,7 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-current_design "psec6_readout_mux"
+current_design readout_mux
 
 # ----------------------------------------------------------------------------
 # Clock Definition
@@ -56,7 +56,7 @@ set_load 0.5 [get_ports poci]
 # ----------------------------------------------------------------------------
 # Reset Path Constraints
 # ----------------------------------------------------------------------------
-set_false_path -from [get_ports rstn] -through [get_pins -hier *rstn*] -hold
+set_false_path -from [get_ports rstn] -through [get_ports -hier *rstn*] -hold
 
 # ----------------------------------------------------------------------------
 # Design Rule Constraints
@@ -64,8 +64,3 @@ set_false_path -from [get_ports rstn] -through [get_pins -hier *rstn*] -hold
 set_max_transition 2.0 [current_design]
 set_max_fanout 16 [current_design]
 set_max_capacitance 0.5 [current_design]
-
-# ----------------------------------------------------------------------------
-# Critical Path Optimization
-# ----------------------------------------------------------------------------
-set_critical_range 1.0 [get_ports poci]

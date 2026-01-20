@@ -7,6 +7,7 @@ module psec6_spi (
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
 
     //output to readout mux
+    output logic [6:0] addr,
     output logic poci_spi,
 
     //output to test point mux
@@ -34,7 +35,6 @@ module psec6_spi (
 );
 
     logic is_write;
-    logic [6:0] addr;
     logic [7:0] wdata;
     logic [1:0] instruction;
 

@@ -4,7 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-current_design "ref_clk_sel_decoder"
+current_design ref_clk_sel_decoder
 
 # ----------------------------------------------------------------------------
 # Input Constraints

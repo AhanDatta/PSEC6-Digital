@@ -8,7 +8,6 @@ module addr_logic (
     input logic cs,
     input logic rstn,
     input logic [7:0] byte_deser, //output from serdes
-    input logic pico,
 
     output logic is_write, //active high, msb of first byte sets this
     output logic [6:0] addr, //seven lowest order bits of first byte

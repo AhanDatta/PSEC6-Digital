@@ -25,7 +25,6 @@ module spi_frontend (
         .cs (cs),
         .rstn (rstn),
         .byte_deser (byte_deser),
-        .pico (pico),
 
         .is_write (is_write),
         .addr (addr),

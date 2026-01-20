@@ -30,7 +30,7 @@ module wr_regs #(
     output logic [5:0] trigger_delay, //address 8
     output logic pll_switch, //address 9, activates on-chip pll
     output logic [7:0] test_point_control, //address 10, choses test point
-    output loigic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
+    output logic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
 
     output logic poci_spi
 );

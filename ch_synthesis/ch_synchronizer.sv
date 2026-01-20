@@ -1,4 +1,4 @@
-//Simple 1FF synchronizer of async trigger to FCLK (5GHz) domain
+//Simple 2FF synchronizer of async trigger to FCLK (5GHz) domain
 module trigger_synchronizer (
     input logic FCLK,
     input logic RSTB,

@@ -4,9 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-set design_name "psec6_readout_mux"
-set_units -capacitance 1000fF
-set_units -time 1000ps
+current_design "psec6_readout_mux"
 
 # ----------------------------------------------------------------------------
 # Clock Definition

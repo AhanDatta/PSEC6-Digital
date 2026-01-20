@@ -4,9 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-set design_name "PSEC5_CH_DIGITAL"
-set_units -capacitance 1000fF
-set_units -time 1000ps
+current_design "PSEC5_CH_DIGITAL"
 
 # ----------------------------------------------------------------------------
 # Clock Definitions

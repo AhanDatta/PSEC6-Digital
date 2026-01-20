@@ -39,8 +39,8 @@ set_clock_latency -source -min 1.0 [get_clocks SPI_CLK]
 # ----------------------------------------------------------------------------
 # Input Constraints - FCLK domain
 # ----------------------------------------------------------------------------
-set fclk_input_delay_max [expr 0.2 * 0.97]
-set fclk_input_delay_min [expr 0.2 * 0.5]
+set fclk_input_delay_max [expr 0.2 * 0.5]
+set fclk_input_delay_min [expr 0.2 * 0.3]
 
 set_input_delay -clock FCLK -max $fclk_input_delay_max [get_ports DISCRIMINATOR_OUTPUT]
 set_input_delay -clock FCLK -min $fclk_input_delay_min [get_ports DISCRIMINATOR_OUTPUT]

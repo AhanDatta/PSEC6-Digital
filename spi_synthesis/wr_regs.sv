@@ -174,5 +174,5 @@ module wr_regs #(
     latched_rw_reg trigger_delay_reg (.rstn (rstn), .reset_val (TRIGGER_DELAY_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[7]), .stored_data(int_trigger_delay));
     latched_rw_reg pll_switch_reg (.rstn (rstn), .reset_val (PLL_SWITCH_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[8]), .stored_data(int_pll_switch));
     latched_rw_reg test_point_control_reg (.rstn (rstn), .reset_val (TEST_POINT_CONTROL_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[9]), .stored_data(int_test_point_control));
-    latched_rw_reg lpf_resistor_sel_reg (.rstn(rstn), .reset_val(LPF_RESISTOR_SEL_RST_VAL), .data(wdata), .data_reg_latch_signal[10], .stored_data(int_lpf_resistor_sel));
+    latched_rw_reg lpf_resistor_sel_reg (.rstn(rstn), .reset_val(LPF_RESISTOR_SEL_RST_VAL), .data(wdata), .latch_en(data_reg_latch_signal[10]), .stored_data(int_lpf_resistor_sel));
 endmodule

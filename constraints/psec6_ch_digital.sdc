@@ -26,8 +26,8 @@ set_clock_uncertainty -setup 1.25 [get_clocks SPI_CLK]
 set_clock_uncertainty -hold 0.5 [get_clocks SPI_CLK]
 
 # Clock transition
-set_clock_transition 0.03 [get_clocks FCLK]
-set_clock_transition 1.0 [get_clocks SPI_CLK]
+set_clock_transition 0.075 [get_clocks FCLK]
+set_clock_transition 2.5 [get_clocks SPI_CLK]
 
 # Clock latency
 set_clock_latency -source -max 0.5 [get_clocks FCLK]

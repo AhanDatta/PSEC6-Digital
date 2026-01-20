@@ -1,6 +1,6 @@
 import types_pkg::*;
 
-module PSEC5_CH_DIGITAL (
+module PSEC6_CH_DIGITAL (
     input logic INST_START, //From SPI
     input logic INST_STOP, //From the trig_in pin
     input logic INST_READOUT, //From SPI

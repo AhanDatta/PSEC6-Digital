@@ -117,7 +117,7 @@ module PSEC6_CH_DIGITAL (
         .TRIGGERE (TRIGGERE_ASYNC)
     );
 
-    // Two-stage synchronizers for all trigger outputs
+    // One-stage synchronizers for all trigger outputs
     trigger_synchronizer sync_triggera (
         .FCLK (FCLK),
         .RSTB (RSTB),

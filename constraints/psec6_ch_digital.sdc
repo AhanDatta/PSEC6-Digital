@@ -4,7 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-current_design PSEC5_CH_DIGITAL
+current_design PSEC6_CH_DIGITAL
 
 # ----------------------------------------------------------------------------
 # Clock Definitions
@@ -166,7 +166,7 @@ set_false_path -from [get_ports {TRIG_DELAY[*]}]
 # ----------------------------------------------------------------------------
 # Two-stage synchronizer for DISCRIMINATOR_OUTPUT when TRIG_DELAY = 0
 # This path goes through async logic and then through trigger_synchronizer
-set_max_delay 0.4 -from [get_ports DISCRIMINATOR_OUTPUT] -through [get_pins -hier *sync_stage1*] -to [get_pins -hier *sync_stage2*]
+set_max_delay 0.4 -from [get_ports DISCRIMINATOR_OUTPUT] -through [get_pins -hier sync_stage1] -to [get_pins -hier sync_stage2]
 
 # ----------------------------------------------------------------------------
 # Design Rule Constraints
@@ -180,45 +180,3 @@ set_max_capacitance 0.3 [current_design]
 # ============================================================================
 # End of SDC Constraints
 # ============================================================================
-
-# ============================================================================
-# Old SDC Constraints
-# ============================================================================
-
-# set sdc_version 2.0
-
-# set_units -capacitance 1000fF
-# set_units -time 1000ps
-
-# # Set the current design
-# current_design "PSEC6_CH_DIGITAL"
-
-# create_clock -name "FCLK" -period 0.2 -waveform {0.0 0.1} [get_ports FCLK]
-# create_clock -name "SPI_CLK" -period 25.0 -waveform {0.0 12.5} [get_ports SPI_CLK]
-# set_clock_transition 0.03 [get_clocks FCLK]
-# set_clock_transition 1.0 [get_clocks SPI_CLK]
-# set_load -pin_load 1.0 [get_ports STOP_REQUEST]
-# set_load -pin_load 0.04 [get_ports TRIGGERA]
-# set_load -pin_load 0.04 [get_ports TRIGGERB]
-# set_load -pin_load 0.04 [get_ports TRIGGERC]
-# set_load -pin_load 0.04 [get_ports TRIGGERD]
-# set_load -pin_load 0.15 [get_ports TRIGGERE]
-# set_load -pin_load 1.0 [get_ports CNT_SER]
-# set_max_delay 0.4 -to [list \
-#   [get_ports TRIGGERA]  \
-#   [get_ports TRIGGERB]  \
-#   [get_ports TRIGGERC]  \
-#   [get_ports TRIGGERD]  \
-#   [get_ports TRIGGERE]  \
-#   [get_ports TRIGGERAC]  \
-#   [get_ports TRIGGERBC]  \
-#   [get_ports TRIGGERCC]  \
-#   [get_ports TRIGGERDC] ]
-# set_max_delay 1 -to [get_ports STOP_REQUEST]
-# set_clock_groups -name "clock_groups_sclk_to_fclk" -asynchronous -group [get_clocks SPI_CLK] -group [get_clocks FCLK]
-# set_clock_gating_check -setup 0.0 
-# set_input_delay -clock [get_clocks SPI_CLK] -add_delay -min 23.0 [get_ports {SELECT_REG[0]}]
-# set_input_delay -clock [get_clocks SPI_CLK] -add_delay -min 23.0 [get_ports {SELECT_REG[1]}]
-# set_input_delay -clock [get_clocks SPI_CLK] -add_delay -min 23.0 [get_ports {SELECT_REG[2]}]
-# set_output_delay -clock [get_clocks SPI_CLK] -add_delay -max 2.0 [get_ports CNT_SER]
-# set_wire_load_mode "segmented"

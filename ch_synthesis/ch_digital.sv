@@ -72,6 +72,7 @@ module PSEC6_CH_DIGITAL (
 
     ch_state_machine state_machine (
         .trigger (trigger),
+        .INST_START (INST_START),
         .start1 (start1),
         .start2 (start2),
         .start4 (start4),

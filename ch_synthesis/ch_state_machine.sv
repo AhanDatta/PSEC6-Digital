@@ -2,6 +2,7 @@ import types_pkg::*;
 
 module ch_state_machine (
     input logic trigger,          //processed discriminator output, should move sampling state
+    input logic INST_START,       //to control the STOP_REQUEST output
     input logic start1,           //start sampling 1 fast buff per trigger
     input logic start2,           //start sampling 2 fast buff per trigger
     input logic start4,           //start sampling 4 fast buff per trigger

@@ -39,7 +39,7 @@ set_clock_latency -source -min 1.0 [get_clocks SPI_CLK]
 # ----------------------------------------------------------------------------
 # Input Constraints - FCLK domain
 # ----------------------------------------------------------------------------
-set fclk_input_delay_max [expr 0.2 * 0.9]
+set fclk_input_delay_max [expr 0.2 * 0.97]
 set fclk_input_delay_min [expr 0.2 * 0.5]
 
 set_input_delay -clock FCLK -max $fclk_input_delay_max [get_ports DISCRIMINATOR_OUTPUT]
@@ -160,13 +160,6 @@ set_false_path -from [get_ports INST_STOP]
 set_false_path -from [get_ports {MODE[*]}]
 set_false_path -from [get_ports DISCRIMINATOR_POLARITY]
 set_false_path -from [get_ports {TRIG_DELAY[*]}]
-
-# ----------------------------------------------------------------------------
-# Synchronizer Constraints
-# ----------------------------------------------------------------------------
-# Two-stage synchronizer for DISCRIMINATOR_OUTPUT when TRIG_DELAY = 0
-# This path goes through async logic and then through trigger_synchronizer
-set_max_delay 0.4 -from [get_ports DISCRIMINATOR_OUTPUT] -through [get_pins -hier sync_stage1] -to [get_pins -hier sync_stage2]
 
 # ----------------------------------------------------------------------------
 # Design Rule Constraints

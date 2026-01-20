@@ -56,7 +56,7 @@ set_load 0.5 [get_ports poci]
 # ----------------------------------------------------------------------------
 # Reset Path Constraints
 # ----------------------------------------------------------------------------
-set_false_path -from [get_ports rstn] -through [get_ports -hier *rstn*] -hold
+set_false_path -from [get_ports rstn] -through [get_pins -hier *rstn*] -hold
 
 # ----------------------------------------------------------------------------
 # Design Rule Constraints

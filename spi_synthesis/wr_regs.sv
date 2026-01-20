@@ -164,99 +164,99 @@ module wr_regs #(
     end
 
     //all data stored here
-    latched_rw_reg vco_digital_band_reg #(
+    latched_rw_reg #(
         .RESET_VAL (VCO_DIGITAL_BAND_RST_VAL)
-    ) (
+    ) vco_digital_band_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[0]),
         .stored_data (int_vco_digital_band)
     );
 
-    latched_rw_reg trigger_channel_mask_reg #(
+    latched_rw_reg #(
         .RESET_VAL (TRIGGER_CHANNEL_MASK_RST_VAL)
-    ) (
+    ) trigger_channel_mask_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[1]), 
         .stored_data (int_trigger_channel_mask)
     );
 
-    latched_rw_reg instruction_reg #(
+    latched_rw_reg #(
         .RESET_VAL (INSTRUCTION_RST_VAL)
-    ) (
+    ) instruction_reg (
         .rstn (full_rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[2]), 
         .stored_data (int_instruction)
     ); //uses full rstn as to generate pulse
 
-    latched_rw_reg mode_reg #(
+    latched_rw_reg #(
         .RESET_VAL (MODE_RST_VAL)
-    ) (
+    ) mode_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[3]), 
         .stored_data (int_mode)
     );
 
-    latched_rw_reg disc_polarity_reg #(
+    latched_rw_reg #(
         .RESET_VAL (DISC_POLARITY_RST_VAL)
-    ) (
+    ) disc_polarity_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[4]), 
         .stored_data (int_disc_polarity)
     );
 
-    latched_rw_reg ref_clk_sel_reg #(
+    latched_rw_reg #(
         .RESET_VAL (REF_CLK_SEL_RST_VAL)
-    ) (
+    ) ref_clk_sel_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[5]), 
         .stored_data (int_ref_clk_sel)
     );
 
-    latched_rw_reg slow_mode_reg #(
+    latched_rw_reg #(
         .RESET_VAL (SLOW_MODE_RST_VAL)
-    ) (
+    ) slow_mode_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[6]), 
         .stored_data (int_slow_mode)
     );
 
-    latched_rw_reg trigger_delay_reg #(
+    latched_rw_reg #(
         .RESET_VAL (TRIGGER_DELAY_RST_VAL)
-    ) (
+    ) trigger_delay_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[7]), 
         .stored_data (int_trigger_delay)
     );
 
-    latched_rw_reg pll_switch_reg #(
+    latched_rw_reg #(
         .RESET_VAL (PLL_SWITCH_RST_VAL)
-    ) (
+    ) pll_switch_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[8]), 
         .stored_data (int_pll_switch)
     );
 
-    latched_rw_reg test_point_control_reg #(
+    latched_rw_reg #(
         .RESET_VAL (TEST_POINT_CONTROL_RST_VAL)
-    ) (
+    ) test_point_control_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[9]), 
         .stored_data (int_test_point_control)
     );
 
-    latched_rw_reg lpf_resistor_sel_reg #(
+    latched_rw_reg #(
         .RESET_VAL (LPF_RESISTOR_SEL_RST_VAL)
-    ) (
+    ) lpf_resistor_sel_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[10]), 

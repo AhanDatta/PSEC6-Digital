@@ -4,7 +4,7 @@
 # ============================================================================
 
 set sdc_version 2.0
-current_design "PSEC5_CH_DIGITAL"
+current_design PSEC5_CH_DIGITAL
 
 # ----------------------------------------------------------------------------
 # Clock Definitions

@@ -36,10 +36,10 @@ module addr_logic (
         end
         else begin
             if (spi_clk_counter != 0 && spi_clk_counter % 8 == 0) begin
-                byte_flag <= 1;
+                byte_flag = 1;
             end 
             else begin
-                byte_flag <= 0;
+                byte_flag = 0;
             end
         end
     end

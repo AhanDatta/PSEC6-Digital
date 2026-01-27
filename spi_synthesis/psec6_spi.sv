@@ -18,14 +18,14 @@ module psec6_spi (
     output logic [5:0] vco_digital_band, //address 1
     output logic [2:0] ref_clk_sel, //address 6
     output logic slow_mode, //address 7
-    output logic pll_switch, //address 9, activates on-chip pll
+    output logic pfd_switch, //address 8, activates pfd
+    output logic pll_switch, //address 9, sends vtune to pad
     output logic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
 
     //output to channel digital
     output logic [7:0] trigger_channel_mask, //address 2
     output logic [1:0] mode, //address 4
     output logic [7:0] disc_polarity, //address 5
-    output logic [5:0] trigger_delay, //address 8
     output logic [2:0] select_reg, //prepares correct counter for readout in digital channel
     
     //instructions set in address 3
@@ -65,7 +65,7 @@ module psec6_spi (
         .disc_polarity (disc_polarity),
         .ref_clk_sel (ref_clk_sel),
         .slow_mode (slow_mode),
-        .trigger_delay (trigger_delay),
+        .pfd_switch (pfd_switch),
         .pll_switch (pll_switch),
         .test_point_control (test_point_control),
         .lpf_resistor_sel (lpf_resistor_sel),

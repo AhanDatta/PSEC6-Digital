@@ -5,7 +5,6 @@ module ch_trigger_gen (
     input logic INST_START,
     input logic DISCRIMINATOR_OUTPUT,
     input logic DISCRIMINATOR_POLARITY,
-    input logic [4:0] TRIG_DELAY,
     input state_t current_state,
 
     output logic trigger
@@ -40,12 +39,7 @@ module ch_trigger_gen (
                 trigger = 0;
             end
             default: begin
-                if (TRIG_DELAY == 5'b0) begin
                     trigger = (DISCRIMINATOR_OUTPUT ^ DISCRIMINATOR_POLARITY) & (!premature_trigger); //async to FCLK
-                end
-                else begin
-                    trigger = (trig_shift_reg[TRIG_DELAY] ^ DISCRIMINATOR_POLARITY) & (!premature_trigger); //sync to FCLK
-                end 
             end
         endcase
     end

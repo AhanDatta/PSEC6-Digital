@@ -9,8 +9,8 @@ current_design PSEC6_CH_DIGITAL
 # ----------------------------------------------------------------------------
 # Clock Definitions
 # ----------------------------------------------------------------------------
-# Fast clock - 5 GHz
-create_clock -name FCLK -period 0.2 -waveform {0 0.1} [get_ports FCLK]
+# Fast clock - 5.12 GHz
+create_clock -name FCLK -period 0.1953 -waveform {0 0.1} [get_ports FCLK]
 
 # SPI clock - 40 MHz
 create_clock -name SPI_CLK -period 25.0 -waveform {0 12.5} [get_ports SPI_CLK]

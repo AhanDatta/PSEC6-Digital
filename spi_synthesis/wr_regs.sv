@@ -8,8 +8,8 @@ module wr_regs #(
     parameter logic [7:0] DISC_POLARITY_RST_VAL = 8'hff,
     parameter logic [7:0] REF_CLK_SEL_RST_VAL = 8'h04,
     parameter logic [7:0] SLOW_MODE_RST_VAL = 8'h00,
-    parameter logic [7:0] TRIGGER_DELAY_RST_VAL = 8'h00,
-    parameter logic [7:0] PLL_SWITCH_RST_VAL = 8'h01,
+    parameter logic [7:0] PFD_SWITCH_RST_VAL = 8'h01,
+    parameter logic [7:0] PLL_SWITCH_RST_VAL = 8'h00,
     parameter logic [7:0] TEST_POINT_CONTROL_RST_VAL = 8'h00,
     parameter logic [7:0] LPF_RESISTOR_SEL_RST_VAL = 8'h1f
 ) (
@@ -27,7 +27,7 @@ module wr_regs #(
     output logic [7:0] disc_polarity, //address 5
     output logic [2:0] ref_clk_sel, //address 6
     output logic slow_mode, //address 7
-    output logic [5:0] trigger_delay, //address 8
+    output logic pfd_switch, //address 8
     output logic pll_switch, //address 9, activates on-chip pll
     output logic [7:0] test_point_control, //address 10, choses test point
     output logic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
@@ -49,7 +49,7 @@ module wr_regs #(
     logic [7:0] int_disc_polarity; 
     logic [7:0] int_ref_clk_sel; 
     logic [7:0] int_slow_mode; 
-    logic [7:0] int_trigger_delay; 
+    logic [7:0] int_pfd_switch; 
     logic [7:0] int_pll_switch; 
     logic [7:0] int_test_point_control;
     logic [7:0] int_lpf_resistor_sel; 
@@ -81,7 +81,7 @@ module wr_regs #(
         disc_polarity = int_disc_polarity;             
         ref_clk_sel = int_ref_clk_sel[2:0];           
         slow_mode = int_slow_mode[0];                 
-        trigger_delay = int_trigger_delay[5:0];        
+        pfd_switch = int_pfd_switch[0];        
         pll_switch = int_pll_switch[0];  
         test_point_control = int_test_point_control;
         lpf_resistor_sel = int_lpf_resistor_sel;             
@@ -115,7 +115,7 @@ module wr_regs #(
             7'd5: data_reg_addr_latch_signal = 'b000_0001_0000; //disc_polarity
             7'd6: data_reg_addr_latch_signal = 'b000_0010_0000; //ref_clk_sel
             7'd7: data_reg_addr_latch_signal = 'b000_0100_0000; //slow_mode
-            7'd8: data_reg_addr_latch_signal = 'b000_1000_0000; //trigger_delay
+            7'd8: data_reg_addr_latch_signal = 'b000_1000_0000; //pfd_switch
             7'd9: data_reg_addr_latch_signal = 'b001_0000_0000; //pll_switch
             7'd10: data_reg_addr_latch_signal = 'b010_0000_0000; //test point control
             7'd11: data_reg_addr_latch_signal = 'b100_0000_0000; //loop filter resistor control
@@ -140,7 +140,7 @@ module wr_regs #(
                 7'd5: rdata <= int_disc_polarity;
                 7'd6: rdata <= int_ref_clk_sel;
                 7'd7: rdata <= int_slow_mode;
-                7'd8: rdata <= int_trigger_delay;
+                7'd8: rdata <= int_pfd_switch;
                 7'd9: rdata <= int_pll_switch;
                 7'd10: rdata <= int_test_point_control;
                 7'd11: rdata <= int_lpf_resistor_sel;
@@ -228,12 +228,12 @@ module wr_regs #(
     );
 
     latched_rw_reg #(
-        .RESET_VAL (TRIGGER_DELAY_RST_VAL)
-    ) trigger_delay_reg (
+        .RESET_VAL (PFD_SWITCH_RST_VAL)
+    ) pfd_switch_reg (
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[7]), 
-        .stored_data (int_trigger_delay)
+        .stored_data (int_pfd_switch)
     );
 
     latched_rw_reg #(

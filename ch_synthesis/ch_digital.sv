@@ -15,7 +15,6 @@ module PSEC6_CH_DIGITAL (
     input smode_t MODE, //Comes from the SPI, set before sampling start command sent
     input logic DISCRIMINATOR_POLARITY, //Comes from SPI, set before sampling
     input logic [2:0] SELECT_REG, //Comes from SPI during readout
-    input logic [4:0] TRIG_DELAY, //Comes from SPI, set before sampling
     input logic FCLK, //gated on clk_enable from SPI, which is an SR latch (INST_START/INST_STOP). 5 GHz
 
     //Outputs are async, dealt with at analog channel level
@@ -44,7 +43,6 @@ module PSEC6_CH_DIGITAL (
         .INST_START (INST_START),
         .DISCRIMINATOR_OUTPUT (DISCRIMINATOR_OUTPUT),
         .DISCRIMINATOR_POLARITY (DISCRIMINATOR_POLARITY),
-        .TRIG_DELAY (TRIG_DELAY),
         .current_state (current_state),
 
         .trigger (trigger)

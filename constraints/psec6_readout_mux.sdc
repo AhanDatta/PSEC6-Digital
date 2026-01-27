@@ -51,7 +51,7 @@ set output_delay_min [expr 25.0 * 0.1]
 set_output_delay -clock spi_clk -max $output_delay_max [get_ports poci]
 set_output_delay -clock spi_clk -min $output_delay_min [get_ports poci]
 
-set_load 0.5 [get_ports poci]
+set_load 1.0 [get_ports poci]
 
 # ----------------------------------------------------------------------------
 # Reset Path Constraints

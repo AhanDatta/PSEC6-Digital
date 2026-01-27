@@ -96,7 +96,7 @@ set_output_delay -clock spi_clk -min $output_delay_min [get_ports inst_readout]
 set_output_delay -clock spi_clk -max $output_delay_max [get_ports inst_start]
 set_output_delay -clock spi_clk -min $output_delay_min [get_ports inst_start]
 
-set_load 0.5 [all_outputs]
+set_load 1.5 [all_outputs]
 
 # ----------------------------------------------------------------------------
 # Reset Path Constraints

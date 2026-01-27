@@ -11,11 +11,10 @@ module PSEC6_CH_DIGITAL (
     input logic [9:0] CB,
     input logic [9:0] CC,
     input logic [9:0] CD,
-    input logic [9:0] CE,
+    input logic [9:0] CE, //Always running during sampling in all modes, and thus used for trigger gating
     input smode_t MODE, //Comes from the SPI, set before sampling start command sent
     input logic DISCRIMINATOR_POLARITY, //Comes from SPI, set before sampling
     input logic [2:0] SELECT_REG, //Comes from SPI during readout
-    input logic FCLK, //gated on clk_enable from SPI, which is an SR latch (INST_START/INST_STOP). 5 GHz
 
     //Outputs are async, dealt with at analog channel level
     output logic STOP_REQUEST, //Flag for a trigger happening
@@ -37,9 +36,9 @@ module PSEC6_CH_DIGITAL (
     logic trigger;
     logic [2:0] trigger_cnt; //# of legitimate trigger fires. 
 
-    //generates triggers after 32 clock cycles of FCLK, according to polarity and raw discriminator output
+    //generates triggers after 32 clock cycles of FCLK (read from timestamp regs), according to polarity and raw discriminator output
     ch_trigger_gen trigger_gen (
-        .FCLK (FCLK),
+        .CE (CE),
         .INST_START (INST_START),
         .DISCRIMINATOR_OUTPUT (DISCRIMINATOR_OUTPUT),
         .DISCRIMINATOR_POLARITY (DISCRIMINATOR_POLARITY),

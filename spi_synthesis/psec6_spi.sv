@@ -31,7 +31,7 @@ module psec6_spi (
     //instructions set in address 3
     output logic inst_rst, //instruction 1
     output logic inst_readout, //instruction 2
-    output logic inst_start //instruction 3    
+    output logic inst_start //instruction 3
 );
 
     logic is_write;

@@ -72,10 +72,14 @@ module ch_state_machine (
                     current_state <= STATE_SAMPLING_E;
                     trigger_cnt <= 3'd1;
                 end
-                // In other states, trigger does nothing
+                STATE_SAMPLING_E: begin // Last fast buffer used, so trigger does nothing
+                    current_state <= current_state;
+                    trigger_cnt <= trigger_cnt;
+                end
+                // In other states (such as readout or stopped), trigger does nothing
                 default: begin
                     current_state <= current_state;
-                    trigger_cnt <= trigger_cnt + 1;
+                    trigger_cnt <= trigger_cnt;
                 end
             endcase
         end

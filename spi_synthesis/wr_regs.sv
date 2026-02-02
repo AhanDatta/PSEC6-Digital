@@ -13,10 +13,6 @@ module wr_regs #(
     parameter logic [7:0] TEST_POINT_CONTROL_RST_VAL = 8'h00,
     parameter logic [7:0] LPF_RESISTOR_SEL_RST_VAL = 8'h1f
 ) (
-    //local power
-    inout DVDD,
-    inout DVSS,
-
     //data to store + address
     input logic spi_clk,
     input logic cs,

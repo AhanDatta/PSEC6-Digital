@@ -1,8 +1,4 @@
 module serdes (
-    //local power
-    inout DVDD,
-    inout DVSS,
-
     input logic spi_clk, //deserialization clk
     input logic pico, //data to deser
     input logic cs, //chip select active high, local spi reset active low

@@ -2,10 +2,6 @@ module addr_to_ch_select #(
     parameter integer CH_REG_START_ADDR = 12, //first channel-based reg address
     parameter integer CH_REG_STOP_ADDR = 67 //last channel-based reg address
 ) (
-    //local power
-    inout DVDD,
-    inout DVSS,
- 
     //inputs
     input logic rstn,
     input logic cs,

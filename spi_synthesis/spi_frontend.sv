@@ -1,8 +1,4 @@
 module spi_frontend (
-    //local power
-    inout DVDD,
-    inout DVSS,
-
     //raw inputs from pads
     input logic spi_clk,
     input logic pico,
@@ -18,9 +14,6 @@ module spi_frontend (
     logic [7:0] byte_deser;
 
     serdes input_deserializer (
-        .DVDD(DVDD),
-        .DVSS(DVSS),
-
         .spi_clk (spi_clk),
         .pico (pico),
         .cs (cs),
@@ -30,9 +23,6 @@ module spi_frontend (
     );
 
     addr_logic addressing_logic (
-        .DVDD(DVDD),
-        .DVSS(DVSS),
-
         .spi_clk (spi_clk),
         .cs (cs),
         .rstn (rstn),

@@ -43,9 +43,6 @@ module psec6_spi (
     logic [1:0] instruction;
 
     spi_frontend frontend (
-        .DVDD(DVDD),
-        .DVSS(DVSS),
-
         .spi_clk (spi_clk),
         .pico (pico),
         .cs (cs),
@@ -57,9 +54,6 @@ module psec6_spi (
     );
 
     wr_regs data_registers (
-        .DVDD(DVDD),
-        .DVSS(DVSS),
-
         .spi_clk(spi_clk),
         .cs (cs),
         .rstn (rstn),
@@ -84,9 +78,6 @@ module psec6_spi (
     );
 
     inst_driver instruction_pulse_gen (
-        .DVDD(DVDD),
-        .DVSS(DVSS),
-
         .inst_reg (instruction),
         .cs (cs),
         .rstn (rstn),
@@ -99,9 +90,6 @@ module psec6_spi (
     );
 
     addr_to_ch_select counter_readout_select (
-        .DVDD(DVDD),
-        .DVSS(DVSS),
-
         .rstn (rstn),
         .cs (cs),
         .spi_clk (spi_clk),

@@ -4,10 +4,6 @@ typedef enum logic {
 } spi_state_t;
 
 module addr_logic (
-    //local power
-    inout DVDD,
-    inout DVSS,
-
     //raw inputs + serdes
     input logic spi_clk,
     input logic cs,

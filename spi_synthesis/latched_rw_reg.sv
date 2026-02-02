@@ -1,6 +1,10 @@
 module latched_rw_reg #(
     parameter logic [7:0] RESET_VAL = 8'h00
 ) (
+    //local power
+    inout DVDD,
+    inout DVSS,
+
     input logic rstn,
     input logic [7:0] data,
     input logic latch_en,

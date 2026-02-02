@@ -1,9 +1,15 @@
 module inst_driver (
+    //local power
+    inout DVDD,
+    inout DVSS,
+
+    //takes instruction async (no clock)
     input logic [1:0] inst_reg,
     input logic cs,
     input logic rstn,
     input logic inst_stop, //should be connected to trigger in, stops sampling clk
 
+    //sent to channels
     output logic inst_rst,
     output logic inst_readout,
     output logic inst_start,

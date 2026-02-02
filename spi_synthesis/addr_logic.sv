@@ -4,11 +4,17 @@ typedef enum logic {
 } spi_state_t;
 
 module addr_logic (
+    //local power
+    inout DVDD,
+    inout DVSS,
+
+    //raw inputs + serdes
     input logic spi_clk,
     input logic cs,
     input logic rstn,
     input logic [7:0] byte_deser, //output from serdes
 
+    //used in WR regs
     output logic is_write, //active high, msb of first byte sets this
     output logic [6:0] addr, //seven lowest order bits of first byte
     output logic [7:0] wdata //set for each byte after the first

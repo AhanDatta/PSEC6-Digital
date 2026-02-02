@@ -13,6 +13,11 @@ module wr_regs #(
     parameter logic [7:0] TEST_POINT_CONTROL_RST_VAL = 8'h00,
     parameter logic [7:0] LPF_RESISTOR_SEL_RST_VAL = 8'h1f
 ) (
+    //local power
+    inout DVDD,
+    inout DVSS,
+
+    //data to store + address
     input logic spi_clk,
     input logic cs,
     input logic rstn,
@@ -20,6 +25,7 @@ module wr_regs #(
     input logic [6:0] addr,
     input logic [7:0] wdata,
 
+    //all controls for the chip
     output logic [5:0] vco_digital_band, //address 1
     output logic [7:0] trigger_channel_mask, //address 2
     output logic [1:0] instruction, //address 3, resets on csb
@@ -32,6 +38,7 @@ module wr_regs #(
     output logic [7:0] test_point_control, //address 10, choses test point
     output logic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
 
+    //readout
     output logic poci_spi
 );
 

@@ -3,6 +3,10 @@ module readout_mux #(
     parameter integer CH_REG_STOP_ADDR = 67, //last channel-based reg address
     parameter integer NUM_REGS_PER_CH = 7 //there are 7 register for each channel
 ) (
+    //local power
+    inout DVDD,
+    inout DVSS,
+
     input logic spi_clk, //used to track addr one cycle back
     input logic [7:0] poci_ch, //timestamps from channels
     input logic poci_spi, //from SPI itself

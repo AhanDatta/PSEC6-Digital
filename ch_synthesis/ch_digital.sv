@@ -1,6 +1,10 @@
 import types_pkg::*;
 
 module PSEC6_CH_DIGITAL (
+    //local power
+    inout DVDD,
+    inout DVSS,
+
     input logic INST_START, //From SPI
     input logic INST_STOP, //From the trig_in pin
     input logic INST_READOUT, //From SPI

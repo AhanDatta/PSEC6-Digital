@@ -57,6 +57,7 @@ globalNetConnect DVDD -type pgpin -pin VDD -inst * -override
 globalNetConnect DVSS -type pgpin -pin VSS -inst * -override
 globalNetConnect DVDD -type pgpin -pin DVDD -inst * -override
 globalNetConnect DVSS -type pgpin -pin DVSS -inst * -override
+
 # Add power rings
 setAddRingMode -stacked_via_top_layer M3 -stacked_via_bottom_layer M1
 addRing -nets { DVDD DVSS } \
@@ -68,6 +69,7 @@ addRing -nets { DVDD DVSS } \
     -offset $poffset \
     -threshold auto \
     -layer {bottom M1 top M1 right M2 left M2 }
+
 # Add horizontal power stripes
 addStripe -nets { DVDD DVSS } \
     -layer M2 \

@@ -21,8 +21,8 @@ set init_verilog /home/designs/Synthesis/PSEC6_readout_mux/results/readout_mux_s
 set init_top_cell $DESIGN_NAME
 
 # Power/Ground nets
-set init_pwr_net {VDD}
-set init_gnd_net {VSS}
+set init_pwr_net {DVDD}
+set init_gnd_net {DVSS}
 
 # MMMC file
 set init_mmmc_file scripts/view_definition.tcl
@@ -53,15 +53,21 @@ set pwidth 0.5
 set poffset 0.7
 
 # Connecting the net we call VDD with the pins on the pcells for VDD
-globalNetConnect VDD -type pgpin -pin VDD -inst * -verbose
-globalNetConnect VSS -type pgpin -pin VSS -inst * -verbose
+#globalNetConnect DVDD -type pgpin -pin VDD -inst * -verbose
+#globalNetConnect DVSS -type pgpin -pin VSS -inst * -verbose
+
+globalNetConnect DVDD -type pgpin -pin VDD -inst * -override
+globalNetConnect DVSS -type pgpin -pin VSS -inst * -override
+globalNetConnect DVDD -type pgpin -pin DVDD -inst * -override
+globalNetConnect DVSS -type pgpin -pin DVSS -inst * -override
+#copied this over from SPI doc, og code is above
 
 # Telling the tool the VDD voltage
-set_db [get_nets VDD] .voltage 1.2
+set_db [get_nets DVDD] .voltage 1.2
 
 # Add power rings
 setAddRingMode -stacked_via_top_layer M3 -stacked_via_bottom_layer M1
-addRing -nets { VDD VSS } \
+addRing -nets { DVDD DVSS } \
     -type core_rings \
     -around user_defined \
     -center 0 \
@@ -70,6 +76,16 @@ addRing -nets { VDD VSS } \
     -offset $poffset \
     -threshold auto \
     -layer {bottom M1 top M1 right M2 left M2 }
+
+# Add horizontal power stripes
+#COPIED IN FROM SPI
+addStripe -nets { DVDD DVSS } \
+    -layer M2 \
+    -direction horizontal \
+    -width $pwidth \
+    -spacing $pspace \
+    -set_to_set_distance [expr 2 * ($pwidth + $pspace)] \
+    -start_offset $poffset
 
 # Connect all power pins/pads/rings
 sroute -connect {blockPin padPin padRing corePin} \
@@ -147,7 +163,8 @@ verifyGeometry
 #------------------------------------------------------------------------------
 
 # Optimize
-optDesign -postRoute -drv
+#optDesign -postRoute -drv
+#this is not included in SPI, commented it out to check
 
 #------------------------------------------------------------------------------
 # Final Reports
@@ -189,7 +206,6 @@ puts "  1. Create OA Library (named anything), Copy from existing library tsmcN6
 puts "  2. In Innovus, File > Save > OA Cellview. Remaster Instances should be tcbn65lplvt, target view is layout."
 puts "  3. Add to cds.lib: DEFINE ${DESIGN_NAME} (Path to OA Library Just Created)"
 puts "  4. Open new library and layout in Virtuoso Layout Editor"
-puts "  5. Manually create physical only VDD and VSS pins on the power rings (usually M1)"
 puts "  6. Create symbol view from layout in Virtuoso by File > New > Cellview > schematicSymbol"
 puts "  7. In the symbol editor, use Create > Cellview > From Cellview > From View Name = layout; To View Name = symbol"
 puts "  8. Instantiate in analog schematic"

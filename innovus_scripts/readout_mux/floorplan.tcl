@@ -43,6 +43,23 @@ editPin -pin {poci} \
     -spacing 2.0 \
     -fixedPin \
 
+# Create power pins on the power rings with larger dimensions
+editPin -pin {DVDD} \
+    -side Top \
+    -layer M2 \
+    -spreadType center \
+    -pinWidth 5.0 \
+    -pinDepth 5.0 \
+    -fixedPin \
+
+editPin -pin {DVSS} \
+    -side Bottom \
+    -layer M2 \
+    -spreadType center \
+    -pinWidth 5.0 \
+    -pinDepth 5.0 \
+    -fixedPin \
+
 # Check utilization
 set core_width [expr ${WIDTH} - 2.0 * ${MARGIN}]
 set core_height [expr ${HEIGHT} - 2.0 * ${MARGIN}]

@@ -1,7 +1,7 @@
 module ref_clk_sel_decoder (
     //local power
-    inout DVDD,
-    inout DVSS,
+    inout VDD,
+    inout VSS,
     
     input logic rstn,
     input logic [2:0] ref_clk_sel,

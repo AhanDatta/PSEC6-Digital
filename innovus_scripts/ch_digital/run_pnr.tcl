@@ -21,8 +21,8 @@ set init_verilog /home/designs/Synthesis/PSEC6_ch_digital/results/psec6_ch_digit
 set init_top_cell $DESIGN_NAME
 
 # Power/Ground nets
-set init_pwr_net {VDD}
-set init_gnd_net {VSS}
+set init_pwr_net {DVDD}
+set init_gnd_net {DVSS}
 
 # MMMC file
 set init_mmmc_file scripts/view_definition.tcl
@@ -53,12 +53,12 @@ set pwidth 0.5
 set poffset 0.7
 
 # Connecting the net we call VDD with the pins on the pcells for VDD
-globalNetConnect VDD -type pgpin -pin VDD -inst * -verbose
-globalNetConnect VSS -type pgpin -pin VSS -inst * -verbose
+globalNetConnect DVDD -type pgpin -pin VDD -inst * -verbose
+globalNetConnect DVSS -type pgpin -pin VSS -inst * -verbose
 
 # Add power rings
 setAddRingMode -stacked_via_top_layer M3 -stacked_via_bottom_layer M1
-addRing -nets { VDD VSS } \
+addRing -nets { DVDD DVSS } \
     -type core_rings \
     -around user_defined \
     -center 0 \
@@ -68,11 +68,22 @@ addRing -nets { VDD VSS } \
     -threshold auto \
     -layer {bottom M1 top M1 right M2 left M2 }
 
+# Add vertical power stripes
+addStripe -nets { DVDD DVSS } \
+    -layer M4 \
+    -direction vertical \
+    -width $pwidth \
+    -spacing $pspace \
+    -set_to_set_distance [expr 2 * ($pwidth + $pspace)] \
+    -start_offset $poffset
+
 # Connect all power pins/pads/rings
 sroute -connect {blockPin padPin padRing corePin} \
     -allowJogging true \
     -allowLayerChange true \
     -blockPin useLef \
+
+editChangeStatus -net {DVDD DVSS} -to FIXED
 
 #------------------------------------------------------------------------------
 # Placement
@@ -168,38 +179,44 @@ extractRC -outfile "reports/final_RC.cap"
 #------------------------------------------------------------------------------
 # Write Outputs
 #------------------------------------------------------------------------------
-set GDS_MAP ${TECH_DIR}/Back_End/lef/tcbn65lplvt_200a/techfiles/Virtuoso/map/mapfiles/Vir65nm_9M_6X2Y_v1.4b.042508.map
+set GDS_MAP ${TECH_DIR}/Back_End/lef/tcbn65lplvt_200a/techfiles/Virtuoso/map/mapfiles/Vir65nm_9M_6X1Z1U_v1.4b.042508.map
+set STD_CELL_GDS ${TECH_DIR}//Back_End/gds/tcbn65lplvt_200a/tcbn65lplvt.gds
 
 # Standard outputs
 defOut results/${DESIGN_NAME}.def
-saveNetlist results/${DESIGN_NAME}_final.v
+saveNetlist results/${DESIGN_NAME}_final.v -phys
 write_sdf results/${DESIGN_NAME}.sdf
 
 # GDS for fabrication
+setStreamOutMode -snapToMGrid true
+
 streamOut results/${DESIGN_NAME}.gds \
+    -structureName ${DESIGN_NAME} \
     -mapFile ${GDS_MAP} \
     -units 1000 \
+    -merge ${STD_CELL_GDS} \
     -mode ALL
 
 # LEF abstract for hierarchical P&R
-write_lef_abstract results/${DESIGN_NAME}.lef
+write_lef_abstract results/${DESIGN_NAME}.lef \
+    -stripePin
+
+# Command to create OA Library
+if {[catch {createLib ${DESIGN_NAME} -referenceTech tsmcN65} err]} {
+    puts "Failed to create library ${DESIGN_NAME}: $err"
+}
+
+# Command to save to OA Library
+oaOut ${DESIGN_NAME} ${DESIGN_NAME} layout \
+    -refLibs {tcbn65lplvt tsmcN65} \
+    -autoRemaster \
+    -leafViewNames {layout} 
 
 puts "="
 puts "Outputs written:"
 puts "  GDS:     results/${DESIGN_NAME}.gds"
 puts "  DEF:     results/${DESIGN_NAME}.def"
 puts "  LEF:     results/${DESIGN_NAME}.lef"
-puts "="
-puts "To use in Virtuoso:"
-puts "  1. Create OA Library (named anything), Copy from existing library tsmcN65"
-puts "  2. In Innovus, File > Save > OA Cellview. Remaster Instances should be tcbn65lplvt, target view is layout."
-puts "  3. Add to cds.lib: DEFINE ${DESIGN_NAME} (Path to OA Library Just Created)"
-puts "  4. Open new library and layout in Virtuoso Layout Editor"
-puts "  5. Manually create physical only VDD and VSS pins on the power rings (usually M1)"
-puts "  6. Create symbol view from layout in Virtuoso by File > New > Cellview > schematicSymbol"
-puts "  7. In the symbol editor, use Create > Cellview > From Cellview > From View Name = layout; To View Name = symbol"
-puts "  8. Instantiate in analog schematic"
-puts "="
 
 # Open final display
 win

@@ -14,8 +14,8 @@ set PIN_LAYER "M4"
 floorplan -site core -d ${WIDTH} ${HEIGHT} ${MARGIN} ${MARGIN} ${MARGIN} ${MARGIN}
 
 # Specify pins and locations
-editPin -pin {rstn ref_clk_sel[*]} -side Bottom -layer ${PIN_LAYER} -spreadType center -spacing 2.0 -fixedPin
-editPin -pin {tgate_control[*]} -side Top -layer ${PIN_LAYER} -spreadType center -spacing 2.0 -fixedPin
+editPin -pin {rstn ref_clk_sel[*] VSS} -side Bottom -layer ${PIN_LAYER} -spreadType center -spacing 2.0 -fixedPin
+editPin -pin {tgate_control[*] VDD} -side Top -layer ${PIN_LAYER} -spreadType center -spacing 2.0 -fixedPin
 
 # Check utilization
 set core_width [expr ${WIDTH} - 2.0 * ${MARGIN}]

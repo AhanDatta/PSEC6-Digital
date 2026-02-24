@@ -3,8 +3,8 @@
 #==============================================================================
 
 # Setting dimensions in um
-set WIDTH 60.0
-set HEIGHT 64.0
+set WIDTH 70.0
+set HEIGHT 70.0
 set MARGIN 5.0
 
 # Define which metal layer pins should live on 
@@ -41,23 +41,6 @@ editPin -pin {trigger_channel_mask[*] mode[*] disc_polarity[*] select_reg[*] ins
     -layer ${PIN_LAYER_3} \
     -spreadType center \
     -spacing 2.0 \
-    -fixedPin \
-
-# Create power pins on the power rings with larger dimensions
-editPin -pin {DVDD} \
-    -side Top \
-    -layer M2 \
-    -spreadType center \
-    -pinWidth 5.0 \
-    -pinDepth 5.0 \
-    -fixedPin \
-
-editPin -pin {DVSS} \
-    -side Bottom \
-    -layer M2 \
-    -spreadType center \
-    -pinWidth 5.0 \
-    -pinDepth 5.0 \
     -fixedPin \
 
 # Check utilization

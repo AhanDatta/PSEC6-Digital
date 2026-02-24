@@ -1,4 +1,4 @@
-module psec6_spi (
+module PSEC6_spi (
     //local power
     inout DVDD,
     inout DVSS,

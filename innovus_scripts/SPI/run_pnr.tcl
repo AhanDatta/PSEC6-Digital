@@ -3,7 +3,7 @@
 #==============================================================================
 
 # Has to be name of top module in design
-set DESIGN_NAME "psec6_spi" 
+set DESIGN_NAME "PSEC6_spi" 
 set TECH_DIR "/opt/TSMC_65nm_MS_RF_LP/TSMCHOME/digital"
 
 #------------------------------------------------------------------------------
@@ -52,11 +52,10 @@ puts "Starting power planning..."
 set pspace 1.0
 set pwidth 0.5
 set poffset 0.7
-# Connecting the net we call VDD with the pins on the pcells for VDD
+
+# Connecting the net we call DVDD with the pins on the pcells for VDD
 globalNetConnect DVDD -type pgpin -pin VDD -inst * -override
 globalNetConnect DVSS -type pgpin -pin VSS -inst * -override
-globalNetConnect DVDD -type pgpin -pin DVDD -inst * -override
-globalNetConnect DVSS -type pgpin -pin DVSS -inst * -override
 
 # Add power rings
 setAddRingMode -stacked_via_top_layer M3 -stacked_via_bottom_layer M1
@@ -68,21 +67,25 @@ addRing -nets { DVDD DVSS } \
     -width $pwidth \
     -offset $poffset \
     -threshold auto \
-    -layer {bottom M1 top M1 right M2 left M2 }
+    -layer {bottom M3 top M3 right M4 left M4}
 
-# Add horizontal power stripes
+
+# Add vertical power stripes
 addStripe -nets { DVDD DVSS } \
-    -layer M2 \
-    -direction horizontal \
+    -layer M4 \
+    -direction vertical \
     -width $pwidth \
     -spacing $pspace \
     -set_to_set_distance [expr 2 * ($pwidth + $pspace)] \
     -start_offset $poffset
+
 # Connect all power pins/pads/rings
 sroute -connect {corePin} \
     -allowJogging true \
     -allowLayerChange true \
     -blockPin useLef \
+
+editChangeStatus -net {DVDD DVSS} -to FIXED
 
 #------------------------------------------------------------------------------
 # Placement
@@ -163,65 +166,44 @@ extractRC -outfile "reports/final_RC.cap"
 #------------------------------------------------------------------------------
 # Write Outputs
 #------------------------------------------------------------------------------
-set GDS_MAP ${TECH_DIR}/Back_End/lef/tcbn65lplvt_200a/techfiles/Virtuoso/map/mapfiles/Vir65nm_9M_6X2Y_v1.4b.042508.map
+set GDS_MAP ${TECH_DIR}/Back_End/lef/tcbn65lplvt_200a/techfiles/Virtuoso/map/mapfiles/Vir65nm_9M_6X1Z1U_v1.4b.042508.map
+set STD_CELL_GDS ${TECH_DIR}//Back_End/gds/tcbn65lplvt_200a/tcbn65lplvt.gds
 
 # Standard outputs
 defOut results/${DESIGN_NAME}.def
-
-# Save a version to run LVS
-saveNetlist results/${DESIGN_NAME}_lvs.v \
-    -includePowerGround \
-    -includePhysicalInst \
-    -excludeLeafCell
-
-# Save a version for simulation (without physical-only cells)
-saveNetlist results/${DESIGN_NAME}_sim.v \
-    -excludeLeafCell
-
+saveNetlist results/${DESIGN_NAME}_final.v -phys
 write_sdf results/${DESIGN_NAME}.sdf
 
 # GDS for fabrication
+setStreamOutMode -snapToMGrid true
+
 streamOut results/${DESIGN_NAME}.gds \
+    -structureName ${DESIGN_NAME} \
     -mapFile ${GDS_MAP} \
     -units 1000 \
-    -mode ALL \
-    -outputMacros
+    -merge ${STD_CELL_GDS} \
+    -mode ALL
 
 # LEF abstract for hierarchical P&R
-write_lef_abstract results/${DESIGN_NAME}.lef
+write_lef_abstract results/${DESIGN_NAME}.lef \
+    -stripePin
 
-# write_oa
-# catch {create_oa_lib Test -oa_attach_tech_lib tsmcN65}
-# write_oa Test $DESIGN_NAME layout -auto_remaster -oa_leaf_views {layout abstract}
-# write_oa econdTMR_econd2 econdTMR layout -auto_remaster -oa_leaf_views {layout abstract}
+# Command to create OA Library
+if {[catch {createLib ${DESIGN_NAME} -referenceTech tsmcN65} err]} {
+    puts "Failed to create library ${DESIGN_NAME}: $err"
+}
 
-#------------------------------------------------------------------------------
-# Summary
-#------------------------------------------------------------------------------
-puts "="
-puts "Place & Route Complete!"
-puts "="
-puts "Key Outputs:"
-puts "  LVS Netlist:  results/${DESIGN_NAME}_lvs.v  (use this for LVS!)"
-puts "  Sim Netlist:  results/${DESIGN_NAME}_sim.v"
-puts "  GDS (normal): results/${DESIGN_NAME}.gds"
-puts "  GDS (flat):   results/${DESIGN_NAME}_flat_vias.gds  (use for Virtuoso!)"
-puts "  DEF:          results/${DESIGN_NAME}.def"
-puts "  LEF:          results/${DESIGN_NAME}.lef"
-puts "  SDF:          results/${DESIGN_NAME}.sdf"
-puts "="
-puts "For Virtuoso Import:"
-puts "  1. Use ${DESIGN_NAME}_flat_vias.gds (flattened vias)"
-puts "  2. Or export to OA directly (see below)"
-puts "="
+# Command to save to OA Library
+oaOut ${DESIGN_NAME} ${DESIGN_NAME} layout \
+    -refLibs {tcbn65lplvt tsmcN65} \
+    -autoRemaster \
+    -leafViewNames {layout} 
 
-# OPTIONAL: Save directly to OA library (avoids GDS round-trip)
-puts "To save directly to OA:"
-puts "  1. File > Save > Design > OA Design Library"
-puts "  2. Library: <your_oa_lib>"
-puts "  3. Cell: ${DESIGN_NAME}"
-puts "  4. View: layout"
-puts "  5. Check 'Remaster Instances' to tcbn65lplvt"
 puts "="
+puts "Outputs written:"
+puts "  GDS:     results/${DESIGN_NAME}.gds"
+puts "  DEF:     results/${DESIGN_NAME}.def"
+puts "  LEF:     results/${DESIGN_NAME}.lef"
 
+# Open final display
 win

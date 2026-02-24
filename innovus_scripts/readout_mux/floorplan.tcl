@@ -48,17 +48,15 @@ editPin -pin {DVDD} \
     -side Top \
     -layer M2 \
     -spreadType center \
-    -pinWidth 5.0 \
-    -pinDepth 5.0 \
     -fixedPin \
+    -optimizeOrder switch
 
 editPin -pin {DVSS} \
     -side Bottom \
     -layer M2 \
     -spreadType center \
-    -pinWidth 5.0 \
-    -pinDepth 5.0 \
     -fixedPin \
+    -optimizeOrder switch
 
 # Check utilization
 set core_width [expr ${WIDTH} - 2.0 * ${MARGIN}]

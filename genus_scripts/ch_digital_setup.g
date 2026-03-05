@@ -38,14 +38,14 @@ syn_map
 syn_opt
 
 # Reports (IMPORTANT - always check these!)
-report_area > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_area.rpt
-report_gates > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_gates.rpt
-report_timing -nworst 10 > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_timing.rpt
-report_power > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_power.rpt
-report_qor > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_qor.rpt
+report_area > /home/designs/Synthesis/PSEC6_ch_digital/reports/ref_clk_sel_area.rpt
+report_gates > /home/designs/Synthesis/PSEC6_ch_digital/reports/ref_clk_sel_gates.rpt
+report_timing -nworst 10 > /home/designs/Synthesis/PSEC6_ch_digital/reports/ref_clk_sel_timing.rpt
+report_power > /home/designs/Synthesis/PSEC6_ch_digital/reports/ref_clk_sel_power.rpt
+report_qor > /home/designs/Synthesis/PSEC6_ch_digital/reports/ref_clk_sel_qor.rpt
 
 # Writting output into netlist and constraints
-write -mapped > /home/designs/Synthesis/PSEC6_spi/results/psec6_ch_digital_synth.v
-write_sdc > /home/designs/Synthesis/PSEC6_spi/results/psec6_ch_digital_synth.sdc
+write -mapped > /home/designs/Synthesis/PSEC6_ch_digital/results/psec6_ch_digital_synth.v
+write_sdc > /home/designs/Synthesis/PSEC6_ch_digital/results/psec6_ch_digital_synth.sdc
 
 puts "Synthesis complete!"

@@ -24,7 +24,7 @@ set init_pwr_net {VDD}
 set init_gnd_net {VSS}
 
 # MMMC file
-set init_mmmc_file scripts/view_definition.tcl
+set init_mmmc_file /home/designs/Synthesis/PSEC6-Digital/innovus_scripts/ref_clk_sel_decoder/view_definition.tcl
 
 # Specifying the node we are working in
 setDesignMode -process 65
@@ -39,7 +39,7 @@ setAnalysisMode -analysisType onChipVariation -cppr both
 #------------------------------------------------------------------------------
 # Floorplanning
 #------------------------------------------------------------------------------
-source "scripts/floorplan.tcl"
+source /home/designs/Synthesis/PSEC6-Digital/innovus_scripts/ref_clk_sel_decoder/floorplan.tcl
 
 #------------------------------------------------------------------------------
 # Power Planning
@@ -54,6 +54,10 @@ set poffset 0.5
 # Connecting the net we call VDD with the pins on the pcells for VDD
 globalNetConnect VDD -type pgpin -pin VDD -inst * -verbose
 globalNetConnect VSS -type pgpin -pin VSS -inst * -verbose
+
+# Connect logical constants (1'b1 / 1'b0) to physical PG nets
+globalNetConnect DVDD -type tiehi -verbose
+globalNetConnect DVSS -type tielo -verbose
 
 # Add power rings
 setAddRingMode -stacked_via_top_layer M3 -stacked_via_bottom_layer M1
@@ -149,7 +153,7 @@ set STD_CELL_GDS ${TECH_DIR}//Back_End/gds/tcbn65lplvt_200a/tcbn65lplvt.gds
 
 # Standard outputs
 defOut results/${DESIGN_NAME}.def
-saveNetlist results/${DESIGN_NAME}_final.v -phys
+saveNetlist results/${DESIGN_NAME}_final.v -includePowerGround 
 write_sdf results/${DESIGN_NAME}.sdf
 
 # GDS for fabrication

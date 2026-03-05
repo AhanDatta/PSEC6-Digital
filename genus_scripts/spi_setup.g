@@ -11,7 +11,7 @@ set_db library {
 # write_vlog_top_module_first true # also doesn't work????
 # continue_on_error false # doesn't work, help root: lies
 
-# Reading in the hdl
+# Reading in the hdl 
 set_db hdl_language sv
 read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/latched_rw_reg.sv
 read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/serdes.sv
@@ -24,7 +24,7 @@ read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/PSEC6_spi.sv
 
 # Elaborating into RTL and reading constraints
 elaborate psec6_spi
-set_top_module psec6_spi
+set_top_module PSEC6_spi
 read_sdc /home/designs/Synthesis/PSEC6-Digital/constraints/psec6_spi.sdc
 
 # Check timing setup
@@ -52,16 +52,16 @@ syn_map
 syn_opt
 
 # Reports (IMPORTANT - always check these!)
-report_area > /home/designs/Synthesis/PSEC6_ref_clk_sel/reports/ref_clk_sel_area.rpt
-report_gates > /home/designs/Synthesis/PSEC6_ref_clk_sel/reports/ref_clk_sel_gates.rpt
-report_timing -nworst 10 > /home/designs/Synthesis/PSEC6_ref_clk_sel/reports/ref_clk_sel_timing.rpt
-report_power > /home/designs/Synthesis/PSEC6_ref_clk_sel/reports/ref_clk_sel_power.rpt
-report_qor > /home/designs/Synthesis/PSEC6_ref_clk_sel/reports/ref_clk_sel_qor.rpt
+report_area > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_area.rpt
+report_gates > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_gates.rpt
+report_timing -nworst 10 > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_timing.rpt
+report_power > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_power.rpt
+report_qor > /home/designs/Synthesis/PSEC6_spi/reports/ref_clk_sel_qor.rpt
 
 # Writting output into netlist and constraints
-write -mapped -pg > /home/designs/Synthesis/PSEC6_ref_clk_sel/results/psec6_spi_synth.v
-write_sdc > /home/designs/Synthesis/PSEC6_ref_clk_sel/results/psec6_spi_synth.sdc
+write -mapped -pg > /home/designs/Synthesis/PSEC6_spi/results/psec6_spi_synth.v
+write_sdc > /home/designs/Synthesis/PSEC6_spi/results/psec6_spi_synth.sdc
 
-# write_hdl -generic -pg > /home/designs/Synthesis/PSEC6_ref_clk_sel/results/psec6_spi_synth.v # doesn't have power pins
+# write_hdl -generic -pg > /home/designs/Synthesis/PSEC6_spi/results/psec6_spi_synth.v # doesn't have power pins
 
 puts "Synthesis complete!"

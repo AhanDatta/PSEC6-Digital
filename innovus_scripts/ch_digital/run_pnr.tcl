@@ -25,7 +25,7 @@ set init_pwr_net {DVDD}
 set init_gnd_net {DVSS}
 
 # MMMC file
-set init_mmmc_file scripts/view_definition.tcl
+set init_mmmc_file /home/designs/Synthesis/PSEC6-Digital/innovus_scripts/ch_digital/view_definition.tcl
 
 # Specifying the node we are working in
 setDesignMode -process 65
@@ -40,7 +40,7 @@ setAnalysisMode -analysisType onChipVariation -cppr both
 #------------------------------------------------------------------------------
 # Floorplanning
 #------------------------------------------------------------------------------
-source "scripts/floorplan.tcl"
+source "/home/designs/Synthesis/PSEC6-Digital/innovus_scripts/ch_digital/floorplan.tcl"
 
 #------------------------------------------------------------------------------
 # Power Planning
@@ -56,6 +56,10 @@ set poffset 0.7
 globalNetConnect DVDD -type pgpin -pin VDD -inst * -verbose
 globalNetConnect DVSS -type pgpin -pin VSS -inst * -verbose
 
+# Connect logical constants (1'b1 / 1'b0) to physical PG nets
+globalNetConnect DVDD -type tiehi -verbose
+globalNetConnect DVSS -type tielo -verbose
+
 # Add power rings
 setAddRingMode -stacked_via_top_layer M3 -stacked_via_bottom_layer M1
 addRing -nets { DVDD DVSS } \
@@ -69,13 +73,13 @@ addRing -nets { DVDD DVSS } \
     -layer {bottom M1 top M1 right M2 left M2 }
 
 # Add vertical power stripes
-addStripe -nets { DVDD DVSS } \
-    -layer M4 \
-    -direction vertical \
-    -width $pwidth \
-    -spacing $pspace \
-    -set_to_set_distance [expr 2 * ($pwidth + $pspace)] \
-    -start_offset $poffset
+# addStripe -nets { DVDD DVSS } \
+#     -layer M4 \
+#     -direction vertical \
+#     -width $pwidth \
+#     -spacing $pspace \
+#     -set_to_set_distance [expr 2 * ($pwidth + $pspace)] \
+#     -start_offset $poffset
 
 # Connect all power pins/pads/rings
 sroute -connect {blockPin padPin padRing corePin} \
@@ -133,8 +137,12 @@ report_timing -max_paths 100 > reports/timing_postCTS.rpt
 #------------------------------------------------------------------------------
 puts "Routing design..."
 
+# Set lowest and highest routing layers
+setNanoRouteMode -routeBottomRoutingLayer                       1
+setNanoRouteMode -routeTopRoutingLayer                          5
+
 # Optimize routing
-routeDesign
+routeDesign 
 routeDesign -viaOpt
 
 #------------------------------------------------------------------------------
@@ -184,7 +192,8 @@ set STD_CELL_GDS ${TECH_DIR}//Back_End/gds/tcbn65lplvt_200a/tcbn65lplvt.gds
 
 # Standard outputs
 defOut results/${DESIGN_NAME}.def
-saveNetlist results/${DESIGN_NAME}_final.v -phys
+saveNetlist results/${DESIGN_NAME}_final.v -phys 
+saveNetlist results/${DESIGN_NAME}_final_no_phys.v -includePowerGround
 write_sdf results/${DESIGN_NAME}.sdf
 
 # GDS for fabrication
@@ -201,10 +210,10 @@ streamOut results/${DESIGN_NAME}.gds \
 write_lef_abstract results/${DESIGN_NAME}.lef \
     -stripePin
 
-# Command to create OA Library
-if {[catch {createLib ${DESIGN_NAME} -referenceTech tsmcN65} err]} {
-    puts "Failed to create library ${DESIGN_NAME}: $err"
-}
+# # Command to create OA Library, uncomment for first time making the library
+# if {[catch {createLib ${DESIGN_NAME} -referenceTech tsmcN65} err]} {
+#     puts "Failed to create library ${DESIGN_NAME}: $err"
+# }
 
 # Command to save to OA Library
 oaOut ${DESIGN_NAME} ${DESIGN_NAME} layout \

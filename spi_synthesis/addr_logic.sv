@@ -36,18 +36,26 @@ module addr_logic (
     //byte flag generator to signal the end of a byte
     assign byte_flag = (spi_clk_counter == 0);
 
+    //dedicated block for wdata to prevent synthesis errors from async cs reset
+    always_ff @(negedge spi_clk or negedge rstn) begin
+        if (!rstn) begin
+            wdata <= '0;
+        end
+        else if (byte_flag) begin
+            if (spi_state == SPI_ADDR) begin
+                wdata <= '0; //clear wdata when reading the address byte
+            end
+            else if (spi_state == SPI_DATA) begin
+                wdata <= byte_deser[7:0]; //capture data byte
+            end
+        end
+    end
+
     //read state machine for spi
     always_ff @(negedge spi_clk or negedge cs or negedge rstn) begin
         if (!rstn) begin
             is_write <= 1'b0;
             addr <= '0;
-            wdata <= '0;
-            spi_state <= SPI_ADDR;
-        end
-        else if (!cs) begin
-            is_write <= 1'b0;
-            addr <= '0;
-            wdata <= wdata; //persistent to avoid race condition with latched ff
             spi_state <= SPI_ADDR;
         end
         else if (byte_flag) begin
@@ -56,16 +64,20 @@ module addr_logic (
                     //first byte sets address, is_write
                     is_write <= byte_deser[7];
                     addr <= byte_deser[6:0];
-                    wdata <= '0;
                     spi_state <= SPI_DATA;
                 end
                 
                 SPI_DATA: begin
-                    wdata <= byte_deser[7:0];
-                    addr <= addr + 7'd1; //supports address rollover
+                    if (!is_write) begin
+                        addr <= addr + 7'd1; //supports address rollover for read
+                        spi_state <= SPI_DATA; //remains in SPI_DATA state to read out more bytes
+                    end
+                    else begin 
+                        addr <= addr;
+                        spi_state <= SPI_ADDR;
+                    end
                     
-                    // Remains in SPI_DATA state to accept subsequent bytes
-                    spi_state <= SPI_DATA; 
+                    
                 end
                 
                 //literally impossible but ok

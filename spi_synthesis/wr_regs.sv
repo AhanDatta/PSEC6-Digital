@@ -68,6 +68,9 @@ module wr_regs #(
 
     //clock counter to latch data at the proper time
     logic [15:0] spi_clk_counter;
+    logic [15:0] aligned_counter;
+    
+    assign aligned_counter = spi_clk_counter - 16'd1;
 
     assign full_rstn = rstn & cs;
 
@@ -106,7 +109,7 @@ module wr_regs #(
     end
 
     //we are in a data-writing portion of the cycle, and we should write
-    assign data_reg_wdata_flag_latch_signal = is_write && (spi_clk_counter[2:0] == 0) && (spi_clk_counter != '0) && (spi_clk_counter != 16'd8); 
+    assign data_reg_wdata_flag_latch_signal = is_write && (spi_clk_counter[3:0] == 4'd0) && (spi_clk_counter != '0) && (spi_clk_counter != 16'd8); 
 
     //generate the correct latch based on the address
     always_comb begin
@@ -156,8 +159,13 @@ module wr_regs #(
         if (!full_rstn || spi_clk_counter <= 16'd8) begin
             poci_spi = 1'b0;
         end
+        //mute during later address bytes of a write transaction
+        //aligned_counter[3] is 0 during address phases (17-24, 33-40...), 1 during data phases
+        else if (is_write && (aligned_counter[3] == 1'b0)) begin
+            poci_spi = 1'b0;
+        end
         else begin
-                poci_spi = rdata[-spi_clk_counter[2:0]]; //uses 2's compliment to get MSB first
+            poci_spi = rdata[-spi_clk_counter[2:0]]; //uses 2's compliment to get MSB first
         end
     end 
 

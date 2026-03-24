@@ -10,7 +10,7 @@ set_db library {
 # write_vlog_preserve_net_name true # doesn't work even tho it exists?????
 # write_vlog_top_module_first true # also doesn't work????
 # continue_on_error false # doesn't work, help root: lies
-set_db dft_scan_mapping false
+set_db syn_map_mux_to_scan false
 
 # Reading in the hdl 
 set_db hdl_language sv

@@ -13,7 +13,14 @@ module ch_trigger_gen (
     // Logic to flush the fast buffer before allowing a trigger
     // If more than 32 fclk cycles passed after start of sampling (starting at 10'h3ff), not premature trigger
     logic premature_trigger;
-    assign premature_trigger = (CE > 10'h00f && CE != 10'h3ff) ? 0 : 1; 
+    always_latch begin 
+        if (INST_START) begin
+            premature_trigger = 1'b1;
+        end
+        else if (CE > 10'h00f && CE != 10'h3ff) begin //trigger E has counted more than 16 clock cycles
+            premature_trigger = 1'b0;
+        end
+    end
 
     always_comb begin
         case (current_state)

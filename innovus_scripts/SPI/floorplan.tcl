@@ -53,7 +53,7 @@ for {set i 0} {$i < 20} {incr i} {
     if {$p != ""} {
         set px [expr {$start_x + $i * $pitch}]
         # Assigns explicit {X Y} coordinate to override auto-spreading
-        editPin -pin $p -assign [list $px $HEIGHT] -layer ${PIN_LAYER_4} -pinWidth 0.2 -pinDepth 0.2 -fixedPin
+        editPin -pin $p -assign [list $px $HEIGHT] -layer ${PIN_LAYER_4} -pinWidth 0.2 -pinDepth 3 -fixedPin
     }
 }
 
@@ -62,7 +62,7 @@ for {set i 0} {$i < 20} {incr i} {
     set p [lindex $bottom_pins $i]
     if {$p != ""} {
         set px [expr {$start_x + $i * $pitch}]
-        editPin -pin $p -assign [list $px 0.0] -layer ${PIN_LAYER_4} -pinWidth 0.2 -pinDepth 0.2 -fixedPin
+        editPin -pin $p -assign [list $px 0.0] -layer ${PIN_LAYER_4} -pinWidth 0.2 -pinDepth 3 -fixedPin
     }
 }
 

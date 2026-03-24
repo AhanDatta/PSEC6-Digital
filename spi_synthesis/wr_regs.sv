@@ -129,8 +129,8 @@ module wr_regs #(
     //READING LOGIC:
     //----------------------------------------------------------------------------------------------------------------------------------------------------
     //everything read msb to lsb, from the address provided
-    assign rdata_ready_flag = (spi_clk_counter%8 == 16'd1) && (spi_clk_counter != 16'd1);
-    always_ff @(posedge rdata_ready_flag or negedge full_rstn) begin
+    assign rdata_ready_flag = (spi_clk_counter[2:0] == 'd0) && (spi_clk_counter != 16'd0);
+    always_ff @(posedge spi_clk or negedge full_rstn) begin
         if (!full_rstn) begin
             rdata <= '0;
         end
@@ -153,18 +153,14 @@ module wr_regs #(
     end 
 
     always_comb begin
-        if (!full_rstn) begin
-            poci_spi = 0;
+        if (!full_rstn || spi_clk_counter <= 16'd8) begin
+            poci_spi = 1'b0;
         end
         else begin
-            if (spi_clk_counter <= 16'd7) begin //don't read while address is being set
-                poci_spi = 0;
-            end
-            else begin
-                poci_spi = rdata[7 - ((spi_clk_counter-1)%8)];
-            end
-        end 
-    end
+                poci_spi = rdata[-spi_clk_counter[2:0]]; //uses 2's compliment to get MSB first
+        end
+    end 
+
 
     //all data stored here
     latched_rw_reg #(

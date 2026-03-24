@@ -5,14 +5,24 @@ module inst_driver (
     input logic rstn,
     input logic inst_stop, //should be connected to trigger in, stops sampling clk
 
+    //from channels/register, for trigger out
+    input logic [7:0] stop_request,
+    input logic [7:0] trigger_channel_mask,
+
     //sent to channels
     output logic inst_rst,
     output logic inst_readout,
     output logic inst_start,
-    output logic clk_enable
+    output logic clk_enable,
+
+    //sent to chip pin
+    output logic trigger_out
 );
     logic full_rstn;
     assign full_rstn = cs && rstn;
+
+    //trigger out logic using mask and discriminator fires
+    assign trigger_out = |(stop_request & trigger_channel_mask);
 
     //these generate pulses implicitly with width of cs high
     //only generate one pulse per time written to instruction by resetting instruction reg on cs

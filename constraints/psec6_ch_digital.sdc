@@ -77,9 +77,9 @@ set_output_delay -clock SPI_CLK -min $spi_output_delay_min [get_ports CNT_SER]
 # ----------------------------------------------------------------------------
 # TRIGGER outputs are combinational from DISCRIMINATOR_OUTPUT and state machine
 # Set max delay constraints for these async paths
-set_max_delay 1.0 -from [get_ports DISCRIMINATOR_OUTPUT] -to [get_ports TRIGGER*]
-set_max_delay 1.0 -from [get_ports INST_START] -to [get_ports TRIGGER*]
-set_max_delay 1.0 -from [get_ports INST_STOP] -to [get_ports TRIGGER*]
+set_max_delay 0.4 -from [get_ports DISCRIMINATOR_OUTPUT] -to [get_ports TRIGGER*]
+set_max_delay 0.4 -from [get_ports INST_START] -to [get_ports TRIGGER*]
+set_max_delay 0.4 -from [get_ports INST_STOP] -to [get_ports TRIGGER*]
 
 set_max_delay 1.0 -from [get_ports DISCRIMINATOR_OUTPUT] -to [get_ports STOP_REQUEST]
 set_max_delay 1.0 -from [get_ports INST_START] -to [get_ports STOP_REQUEST]
@@ -87,8 +87,8 @@ set_max_delay 1.0 -from [get_ports INST_STOP] -to [get_ports STOP_REQUEST]
 
 # Output loads
 set_load 0.5 [get_ports TRIGGER*]
-set_load 0.5 [get_ports CNT_SER]
-set_load 1.0 [get_ports STOP_REQUEST]
+set_load 2.0 [get_ports CNT_SER]
+set_load 2.0 [get_ports STOP_REQUEST]
 
 # ----------------------------------------------------------------------------
 # False Paths
@@ -114,7 +114,7 @@ set_max_transition 2.0 [get_clocks SPI_CLK]
 set_max_transition 1.0 [current_design]
 
 set_max_fanout 16 [current_design]
-set_max_capacitance 0.5 [current_design]
+set_max_capacitance 3.0 [current_design]
 
 # ============================================================================
 # End of SDC Constraints

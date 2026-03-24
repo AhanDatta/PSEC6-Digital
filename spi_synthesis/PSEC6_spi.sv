@@ -9,25 +9,28 @@ module PSEC6_spi (
     input logic pico,
     input logic cs, //spi specific reset
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
+    input logic [7:0] poci_ch, //timestamps from channels
 
-    //output to readout mux
-    output logic [6:0] addr,
-    output logic poci_spi,
+    //inputs from channel
+    input logic [7:0] stop_request,
+
+    //output to chip pin
+    output logic poci,
+    output logic trigger_out,
 
     //output to test point mux
-    output logic [7:0] test_point_control,
+    output logic [7:0] test_point_control, //address 10
 
     //output to clock blocks
     output logic clk_enable,
     output logic [5:0] vco_digital_band, //address 1
-    output logic [2:0] ref_clk_sel, //address 6
+    output logic [4:0] ref_clk_tgate_control, //address 6
     output logic slow_mode, //address 7
     output logic pfd_switch, //address 8, activates pfd
     output logic pll_switch, //address 9, sends vtune to pad
     output logic [7:0] lpf_resistor_sel, //address 11, controls resistance of loop filter
 
     //output to channel digital
-    output logic [7:0] trigger_channel_mask, //address 2
     output logic [1:0] mode, //address 4
     output logic [7:0] disc_polarity, //address 5
     output logic [2:0] select_reg, //prepares correct counter for readout in digital channel
@@ -41,6 +44,9 @@ module PSEC6_spi (
     logic is_write;
     logic [7:0] wdata;
     logic [1:0] instruction;
+    logic [2:0] ref_clk_sel;
+    logic [7:0] trigger_channel_mask;
+    logic poci_spi;
 
     spi_frontend frontend (
         .spi_clk (spi_clk),
@@ -83,6 +89,11 @@ module PSEC6_spi (
         .rstn (rstn),
         .inst_stop (trigger_in),
 
+        .stop_request (stop_request),
+        .trigger_channel_mask(trigger_channel_mask),
+
+        .trigger_out(trigger_out),
+
         .inst_rst (inst_rst),
         .inst_readout (inst_readout),
         .inst_start (inst_start),
@@ -96,6 +107,24 @@ module PSEC6_spi (
         .addr (addr),
 
         .select_reg (select_reg)
+    );
+
+    ref_clk_sel_decoder ref_clk_control (
+        .rstn (rstn),
+        .ref_clk_sel (ref_clk_sel),
+
+        .tgate_control (ref_clk_tgate_control)
+    );
+
+    readout_mux readout_select (
+        .spi_clk (spi_clk),
+        .poci_ch (poci_ch),
+        .poci_spi (poci_spi),
+        .cs (cs),
+        .rstn (rstn),
+        .addr (addr),
+
+        .poci (poci)
     );
 
 endmodule

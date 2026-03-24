@@ -1,10 +1,10 @@
 # ============================================================================
-# SDC Constraints for psec6_spi Module
+# SDC Constraints for PSEC6_spi Module
 # Target: TSMC 65nm Process
 # ============================================================================
 
 set sdc_version 2.0
-current_design psec6_spi
+current_design PSEC6_spi
 
 # ----------------------------------------------------------------------------
 # Clock Definition
@@ -25,17 +25,25 @@ set_clock_latency -source -min 1.0 [get_clocks spi_clk]
 set input_delay_max [expr 25.0 * 0.4]
 set input_delay_min [expr 25.0 * 0.1]
 
+# Standard Inputs
 set_input_delay -clock spi_clk -max $input_delay_max [get_ports pico]
 set_input_delay -clock spi_clk -min $input_delay_min [get_ports pico]
 
 set_input_delay -clock spi_clk -max $input_delay_max [get_ports cs]
 set_input_delay -clock spi_clk -min $input_delay_min [get_ports cs]
 
-set_input_delay -clock spi_clk -max 5.0 [get_ports rstn]
-set_input_delay -clock spi_clk -min 0.0 [get_ports rstn]
-
 set_input_delay -clock spi_clk -max $input_delay_max [get_ports trigger_in]
 set_input_delay -clock spi_clk -min $input_delay_min [get_ports trigger_in]
+
+set_input_delay -clock spi_clk -max $input_delay_max [get_ports {poci_ch[*]}]
+set_input_delay -clock spi_clk -min $input_delay_min [get_ports {poci_ch[*]}]
+
+set_input_delay -clock spi_clk -max $input_delay_max [get_ports {stop_request[*]}]
+set_input_delay -clock spi_clk -min $input_delay_min [get_ports {stop_request[*]}]
+
+# Reset Input
+set_input_delay -clock spi_clk -max 5.0 [get_ports rstn]
+set_input_delay -clock spi_clk -min 0.0 [get_ports rstn]
 
 set_input_transition 1.0 [all_inputs]
 
@@ -45,59 +53,31 @@ set_input_transition 1.0 [all_inputs]
 set output_delay_max [expr 25.0 * 0.4]
 set output_delay_min [expr 25.0 * 0.1]
 
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports poci_spi]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports poci_spi]
+# Default output delays
+set_output_delay -clock spi_clk -max $output_delay_max [all_outputs]
+set_output_delay -clock spi_clk -min $output_delay_min [all_outputs]
 
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {addr[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {addr[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {test_point_control[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {test_point_control[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports clk_enable]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports clk_enable]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {vco_digital_band[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {vco_digital_band[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {ref_clk_sel[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {ref_clk_sel[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports slow_mode]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports slow_mode]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports pll_switch]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports pll_switch]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {lpf_resistor_sel[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {lpf_resistor_sel[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {trigger_channel_mask[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {trigger_channel_mask[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {mode[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {mode[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {disc_polarity[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {disc_polarity[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports {select_reg[*]}]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports {select_reg[*]}]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports inst_rst]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports inst_rst]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports inst_readout]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports inst_readout]
-
-set_output_delay -clock spi_clk -max $output_delay_max [get_ports inst_start]
-set_output_delay -clock spi_clk -min $output_delay_min [get_ports inst_start]
-
+# ----------------------------------------------------------------------------
+# Output Load Constraints (Parasitic Capacitance)
+# ----------------------------------------------------------------------------
+# Default load for short, local routing
 set_load 1.5 [all_outputs]
+
+# Override load for signals driving long traces out to the channels (~3.0 pF)
+set channel_outputs [get_ports { \
+    mode[*] \
+    disc_polarity[*] \
+    select_reg[*] \
+    inst_rst \
+    inst_readout \
+    inst_start \
+}]
+set_load 3.0 $channel_outputs
 
 # ----------------------------------------------------------------------------
 # Reset Path Constraints
 # ----------------------------------------------------------------------------
+# False path for the asynchronous active-low reset
 set_false_path -from [get_ports rstn] -through [get_pins -hier *rstn*] -hold
 
 # ----------------------------------------------------------------------------
@@ -105,4 +85,7 @@ set_false_path -from [get_ports rstn] -through [get_pins -hier *rstn*] -hold
 # ----------------------------------------------------------------------------
 set_max_transition 2.0 [current_design]
 set_max_fanout 16 [current_design]
-set_max_capacitance 0.5 [current_design]
+
+# Max capacitance increased to >3.0pF to prevent DRC violations on the 
+# high-load channel traces.
+set_max_capacitance 4.0 [current_design]

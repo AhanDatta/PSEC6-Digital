@@ -181,6 +181,7 @@ set STD_CELL_GDS ${TECH_DIR}//Back_End/gds/tcbn65lplvt_200a/tcbn65lplvt.gds
 defOut results/${DESIGN_NAME}.def
 saveNetlist results/${DESIGN_NAME}_final.v -phys 
 saveNetlist results/${DESIGN_NAME}_final_no_phys.v -includePowerGround 
+saveNetlist results/${DESIGN_NAME}_top_cell.v -topCell 
 write_sdf results/${DESIGN_NAME}.sdf
 
 # GDS for fabrication

@@ -131,6 +131,10 @@ report_timing > reports/timing_postCTS.rpt
 #------------------------------------------------------------------------------
 puts "Routing design..."
 
+# Set lowest and highest routing layers
+setNanoRouteMode -routeBottomRoutingLayer                       1
+setNanoRouteMode -routeTopRoutingLayer                          5
+
 # Optimize routing
 routeDesign
 routeDesign -viaOpt

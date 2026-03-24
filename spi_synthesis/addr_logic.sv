@@ -71,6 +71,7 @@ module addr_logic (
                         spi_state <= SPI_DATA; 
                     end
                     
+                    //literally impossible but ok
                     default: begin
                         spi_state <= SPI_ADDR;
                     end

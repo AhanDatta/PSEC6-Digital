@@ -43,6 +43,7 @@ module PSEC6_spi (
 
     logic is_write;
     logic [7:0] wdata;
+    logic [7:0] addr;
     logic [1:0] instruction;
     logic [2:0] ref_clk_sel;
     logic [7:0] trigger_channel_mask;

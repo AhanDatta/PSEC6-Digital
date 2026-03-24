@@ -21,6 +21,8 @@ read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/addr_to_ch_select.s
 read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/inst_driver.sv
 read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/wr_regs.sv
 read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/PSEC6_spi.sv
+read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/readout_mux.sv
+read_hdl /home/designs/Synthesis/PSEC6-Digital/spi_synthesis/ref_clk_sel_decoder.sv
 
 # Elaborating into RTL and reading constraints
 elaborate psec6_spi

@@ -174,6 +174,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (VCO_DIGITAL_BAND_RST_VAL)
     ) vco_digital_band_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[0]),
@@ -183,6 +184,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (TRIGGER_CHANNEL_MASK_RST_VAL)
     ) trigger_channel_mask_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[1]), 
@@ -192,6 +194,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (INSTRUCTION_RST_VAL)
     ) instruction_reg (
+        .spi_clk (spi_clk),
         .rstn (full_rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[2]), 
@@ -201,6 +204,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (MODE_RST_VAL)
     ) mode_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[3]), 
@@ -210,6 +214,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (DISC_POLARITY_RST_VAL)
     ) disc_polarity_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[4]), 
@@ -219,6 +224,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (REF_CLK_SEL_RST_VAL)
     ) ref_clk_sel_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[5]), 
@@ -228,6 +234,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (SLOW_MODE_RST_VAL)
     ) slow_mode_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[6]), 
@@ -237,6 +244,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (PFD_SWITCH_RST_VAL)
     ) pfd_switch_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[7]), 
@@ -246,6 +254,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (PLL_SWITCH_RST_VAL)
     ) pll_switch_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[8]), 
@@ -255,6 +264,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (TEST_POINT_CONTROL_RST_VAL)
     ) test_point_control_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[9]), 
@@ -264,6 +274,7 @@ module wr_regs #(
     latched_rw_reg #(
         .RESET_VAL (LPF_RESISTOR_SEL_RST_VAL)
     ) lpf_resistor_sel_reg (
+        .spi_clk (spi_clk),
         .rstn (rstn), 
         .data (wdata), 
         .latch_en (data_reg_latch_signal[10]), 

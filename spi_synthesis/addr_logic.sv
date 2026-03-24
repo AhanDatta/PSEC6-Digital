@@ -36,24 +36,11 @@ module addr_logic (
     //byte flag generator to signal the end of a byte
     assign byte_flag = (spi_clk_counter == 0);
 
-    //dedicated block for wdata to prevent synthesis errors from async cs reset
-    always_ff @(negedge spi_clk or negedge rstn) begin
-        if (!rstn) begin
-            wdata <= '0;
-        end
-        else if (byte_flag) begin
-            if (spi_state == SPI_ADDR) begin
-                wdata <= '0; //clear wdata when reading the address byte
-            end
-            else if (spi_state == SPI_DATA) begin
-                wdata <= byte_deser[7:0]; //capture data byte
-            end
-        end
-    end
+    assign wdata = byte_deser; //latch logic is handled in wr_regs module
 
     //read state machine for spi
-    always_ff @(negedge spi_clk or negedge cs or negedge rstn) begin
-        if (!rstn) begin
+    always_ff @(negedge spi_clk or negedge full_rstn) begin
+        if (!full_rstn) begin
             is_write <= 1'b0;
             addr <= '0;
             spi_state <= SPI_ADDR;

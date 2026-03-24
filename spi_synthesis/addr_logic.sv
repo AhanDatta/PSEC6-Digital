@@ -34,14 +34,20 @@ module addr_logic (
     end 
 
     //byte flag generator to signal the end of a byte
-    assign byte_flag = (count == 0);
+    assign byte_flag = (spi_clk_counter == 0);
 
     //read state machine for spi
-    always_ff @(negedge spi_clk or negedge full_rstn) begin
-        if (!full_rstn) begin
+    always_ff @(negedge spi_clk or negedge cs or negedge rstn) begin
+        if (!rstn) begin
             is_write <= 1'b0;
             addr <= '0;
             wdata <= '0;
+            spi_state <= SPI_ADDR;
+        end
+        else if (!cs) begin
+            is_write <= 1'b0;
+            addr <= '0;
+            wdata <= wdata; //persistent to avoid race condition with latched ff
             spi_state <= SPI_ADDR;
         end
         else if (byte_flag) begin

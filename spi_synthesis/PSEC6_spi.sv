@@ -7,7 +7,7 @@ module PSEC6_spi (
     input logic rstn, //chip-wide reset
     input logic spi_clk,
     input logic pico,
-    input logic cs, //spi specific reset
+    input logic cs, //spi specific reset, active low
     input logic trigger_in, //tells the chip to stop sampling, sets clk_enable = 0
     input logic [7:0] poci_ch, //timestamps from channels
 

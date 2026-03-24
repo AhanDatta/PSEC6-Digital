@@ -106,7 +106,7 @@ module wr_regs #(
     end
 
     //we are in a data-writing portion of the cycle, and we should write
-    assign data_reg_wdata_flag_latch_signal = is_write && (spi_clk_counter%8 == 0) && (spi_clk_counter != '0) && (spi_clk_counter != 16'd8); 
+    assign data_reg_wdata_flag_latch_signal = is_write && (spi_clk_counter[2:0] == 0) && (spi_clk_counter != '0) && (spi_clk_counter != 16'd8); 
 
     //generate the correct latch based on the address
     always_comb begin

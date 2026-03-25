@@ -13,35 +13,35 @@ module ch_mode_decoder (
            case (MODE) 
                     MODE_SAMPLE1: 
                         begin
-                            start1 = 1;
-                            start2 = 0;
-                            start4 = 0;
+                            start1 = 1'b1;
+                            start2 = 1'b0;
+                            start4 = 1'b0;
                         end
                     MODE_SAMPLE2: 
                         begin
-                            start1 = 0;
-                            start2 = 1;
-                            start4 = 0;
+                            start1 = 1'b0;
+                            start2 = 1'b1;
+                            start4 = 1'b0;
                         end
                     MODE_SAMPLE4: 
                         begin
-                            start1 = 0;
-                            start2 = 0;
-                            start4 = 1;
+                            start1 = 1'b0;
+                            start2 = 1'b0;
+                            start4 = 1'b1;
                         end 
                     default: //default should only be reached on MODE = 2'b10 
                         begin
                             //default is to sample only one pulse with all four fast banks
-                            start1 = 0;
-                            start2 = 0;
-                            start4 = 1;
+                            start1 = 1'b0;
+                            start2 = 1'b0;
+                            start4 = 1'b1;
                         end
                 endcase 
         end
         else begin //resets the pulse
-            start1 = 0;
-            start2 = 0;
-            start4 = 0;
+            start1 = 1'b0;
+            start2 = 1'b0;
+            start4 = 1'b0;
         end
     end
 endmodule

@@ -29,17 +29,17 @@ module ch_spi_readout (
 
     always_ff @(posedge SPI_CLK or negedge RSTB) begin
         if (!RSTB) begin
-            CNT_SER <= 0;
-            ser_pos <= 0;
+            CNT_SER <= '0;
+            ser_pos <= '0;
         end
         else begin //Default behavior when SPI_CLK is high
             if (SELECT_REG == 3'd7) begin
-                CNT_SER <= 0;
-                ser_pos <= 0;
+                CNT_SER <= '0;
+                ser_pos <= '0;
             end 
             else begin 
                 CNT_SER <= ctmp[SELECT_REG*8+ser_pos];
-                ser_pos <= ser_pos + 1; //only 3 bit, so effectively mod 8
+                ser_pos <= ser_pos + '1; //only 3 bit, so effectively mod 8
             end
         end
     end

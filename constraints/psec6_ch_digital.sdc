@@ -16,7 +16,7 @@ create_clock -name SPI_CLK -period 25.0 -waveform {0 12.5} [get_ports SPI_CLK]
 create_clock -name INST_READOUT_CLK -period 25.0 -waveform {0 12.5} [get_ports INST_READOUT]
 
 # Fast analog trigger clock - Using 1.0ns (1 GHz) to heavily constrain the analog paths
-create_clock -name TRIGGER_CLK -period 1.0 -waveform {0 0.5} [get_ports DISCRIMINATOR_OUTPUT]
+create_clock -name TRIGGER_CLK -period 2.5 -waveform {0 1.25} [get_ports DISCRIMINATOR_OUTPUT]
 
 # Define Clock Domains as Asynchronous to prevent impossible cross-domain timing checks
 set_clock_groups -asynchronous \
@@ -27,7 +27,7 @@ set_clock_groups -asynchronous \
 # Clock uncertainty (Setup/Hold margins)
 set_clock_uncertainty -setup 1.25 [get_clocks SPI_CLK]
 set_clock_uncertainty -hold 0.5 [get_clocks SPI_CLK]
-set_clock_uncertainty -setup 0.2 [get_clocks TRIGGER_CLK]
+set_clock_uncertainty -setup 0.05 [get_clocks TRIGGER_CLK]
 set_clock_uncertainty -hold 0.1 [get_clocks TRIGGER_CLK]
 
 # Clock transition
@@ -62,11 +62,11 @@ set_output_delay -clock SPI_CLK -min -1.0 [get_ports CNT_SER]
 
 # TRIGGER Outputs - Very tight constraints relative to the fast trigger clock
 # They drive internal analog SCAs, so they must arrive extremely fast
-set_output_delay -clock TRIGGER_CLK -max 0.4 [get_ports TRIGGER*]
-set_output_delay -clock TRIGGER_CLK -min -0.1 [get_ports TRIGGER*]
+set_output_delay -clock TRIGGER_CLK -max 0.05 [get_ports TRIGGER*]
+set_output_delay -clock TRIGGER_CLK -min 0.00 [get_ports TRIGGER*]
 
 # STOP_REQUEST Output
-set_output_delay -clock TRIGGER_CLK -max 0.5 [get_ports STOP_REQUEST]
+set_output_delay -clock TRIGGER_CLK -max 0.05 [get_ports STOP_REQUEST]
 set_output_delay -clock TRIGGER_CLK -min 0.0 [get_ports STOP_REQUEST]
 
 # ----------------------------------------------------------------------------

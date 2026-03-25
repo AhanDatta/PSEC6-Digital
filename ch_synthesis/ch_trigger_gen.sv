@@ -25,13 +25,13 @@ module ch_trigger_gen (
     always_comb begin
         case (current_state)
             STATE_STOPPED: begin
-                trigger = 0;
+                trigger = 1'b0;
             end
             STATE_INIT: begin
-                trigger = 0;
+                trigger = 1'b0;
             end
             STATE_READOUT: begin
-                trigger = 0;
+                trigger = 1'b0;
             end
             default: begin
                     trigger = (DISCRIMINATOR_OUTPUT ^ DISCRIMINATOR_POLARITY) & (!premature_trigger); //async to FCLK

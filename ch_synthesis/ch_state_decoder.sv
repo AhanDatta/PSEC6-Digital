@@ -22,148 +22,148 @@ module ch_state_decoder (
         case (current_state)
             STATE_INIT:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 1;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 1;
-                    TRIGGERE = 1;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b1;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b1;
+                    TRIGGERE = 1'b1;
                 end
             STATE_STOPPED:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 1;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 1;
-                    TRIGGERE = 1;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b1;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b1;
+                    TRIGGERE = 1'b1;
                 end
             STATE_READOUT:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 1;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 1;
-                    TRIGGERE = 1;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b1;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b1;
+                    TRIGGERE = 1'b1;
                 end
             STATE_SAMPLING_A:
                 begin
-                    TRIGGERA = 0;
-                    TRIGGERAC = 0;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 0;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 0;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b0;
+                    TRIGGERAC = 1'b0;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b0;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b0;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_B:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 0;
-                    TRIGGERBC = 0;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 0;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b0;
+                    TRIGGERBC = 1'b0;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b0;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_C:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 0;
-                    TRIGGERCC = 0;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b0;
+                    TRIGGERCC = 1'b0;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_D:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 1;
-                    TRIGGERD = 0;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b1;
+                    TRIGGERD = 1'b0;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_E:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 1;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 1;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b1;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b1;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_A_AND_B:
                 begin
-                    TRIGGERA = 0;
-                    TRIGGERAC = 0;
-                    TRIGGERB = 0;
-                    TRIGGERBC = 0;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 0;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b0;
+                    TRIGGERAC = 1'b0;
+                    TRIGGERB = 1'b0;
+                    TRIGGERBC = 1'b0;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b0;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_C_AND_D:
                 begin
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 0;
-                    TRIGGERCC = 0;
-                    TRIGGERD = 0;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b0;
+                    TRIGGERCC = 1'b0;
+                    TRIGGERD = 1'b0;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             STATE_SAMPLING_ALL:
                 begin
-                    TRIGGERA = 0;
-                    TRIGGERAC = 0;
-                    TRIGGERB = 0;
-                    TRIGGERBC = 0;
-                    TRIGGERC = 0;
-                    TRIGGERCC = 0;
-                    TRIGGERD = 0;
-                    TRIGGERDC = 0;
-                    TRIGGERE = 0;
+                    TRIGGERA = 1'b0;
+                    TRIGGERAC = 1'b0;
+                    TRIGGERB = 1'b0;
+                    TRIGGERBC = 1'b0;
+                    TRIGGERC = 1'b0;
+                    TRIGGERCC = 1'b0;
+                    TRIGGERD = 1'b0;
+                    TRIGGERDC = 1'b0;
+                    TRIGGERE = 1'b0;
                 end
             default: // Handle any other states if necessary
                 begin
                     // Default behavior
-                    TRIGGERA = 1;
-                    TRIGGERAC = 1;
-                    TRIGGERB = 1;
-                    TRIGGERBC = 1;
-                    TRIGGERC = 1;
-                    TRIGGERCC = 1;
-                    TRIGGERD = 1;
-                    TRIGGERDC = 1;
-                    TRIGGERE = 1;
+                    TRIGGERA = 1'b1;
+                    TRIGGERAC = 1'b1;
+                    TRIGGERB = 1'b1;
+                    TRIGGERBC = 1'b1;
+                    TRIGGERC = 1'b1;
+                    TRIGGERCC = 1'b1;
+                    TRIGGERD = 1'b1;
+                    TRIGGERDC = 1'b1;
+                    TRIGGERE = 1'b1;
                 end
         endcase
     end

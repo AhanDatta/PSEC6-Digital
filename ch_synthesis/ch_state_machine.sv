@@ -23,22 +23,22 @@ module ch_state_machine (
 
     always_latch begin
         if (!RSTB) begin
-            mode_sampling = 0;
-            mode_readout  = 0;
-            mode_stopped  = 1;
+            mode_sampling = 1'b0;
+            mode_readout  = 1'b0;
+            mode_stopped  = 1'b1;
             sample_type   = MODE_SAMPLE1;
         end else if (INST_STOP) begin
-            mode_sampling = 0;
-            mode_readout  = 0;
-            mode_stopped  = 1;
+            mode_sampling = 1'b0;
+            mode_readout  = 1'b0;
+            mode_stopped  = 1'b1;
         end else if (INST_READOUT) begin
-            mode_sampling = 0;
-            mode_readout  = 1;
-            mode_stopped  = 0;
+            mode_sampling = 1'b0;
+            mode_readout  = 1'b1;
+            mode_stopped  = 1'b0;
         end else if (start1 || start2 || start4) begin
-            mode_sampling = 1;
-            mode_readout  = 0;
-            mode_stopped  = 0;
+            mode_sampling = 1'b1;
+            mode_readout  = 1'b0;
+            mode_stopped  = 1'b0;
             
             //remember which start command fired using smode_t
             if (start1)      sample_type = MODE_SAMPLE1;
@@ -112,10 +112,10 @@ module ch_state_machine (
     //STOP_REQUEST is or'd from each channel to trigger out
     always_ff @(posedge trigger, posedge INST_START) begin
         if (INST_START) begin
-            STOP_REQUEST <= 0;
+            STOP_REQUEST <= '0;
         end
         else begin
-            STOP_REQUEST <= 1;
+            STOP_REQUEST <= '1;
         end
     end
 

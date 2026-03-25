@@ -6,6 +6,9 @@ set_db library {
     tcbn65lplvtbc_ccs.lib
 }
 
+# Stops synthesis from using slow unconstrained ffs
+set_db / .use_scan_seqs_for_non_dft false
+
 # Reading in the hdl
 set_db hdl_language sv
 read_hdl /home/designs/Synthesis/PSEC6-Digital/ch_synthesis/types_pkg.sv

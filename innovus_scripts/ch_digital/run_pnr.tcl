@@ -213,11 +213,11 @@ write_lef_abstract results/${DESIGN_NAME}_v2.lef \
 
 # Command to create OA Library, uncomment for first time making the library
 if {[catch {createLib ${DESIGN_NAME}_v2 -referenceTech tsmcN65} err]} {
-    puts "Failed to create library ${DESIGN_NAME}: $err"
+    puts "Failed to create library ${DESIGN_NAME}_v2: $err"
 }
 
 # Command to save to OA Library
-oaOut ${DESIGN_NAME}_v2 ${DESIGN_NAME} layout \
+oaOut ${DESIGN_NAME}_v2 ${DESIGN_NAME}_v2 layout \
     -refLibs {tcbn65lplvt tsmcN65} \
     -autoRemaster \
     -leafViewNames {layout} 

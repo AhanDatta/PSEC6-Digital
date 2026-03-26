@@ -178,16 +178,16 @@ set GDS_MAP ${TECH_DIR}/Back_End/lef/tcbn65lplvt_200a/techfiles/Virtuoso/map/map
 set STD_CELL_GDS ${TECH_DIR}//Back_End/gds/tcbn65lplvt_200a/tcbn65lplvt.gds
 
 # Standard outputs
-defOut results/${DESIGN_NAME}.def
-saveNetlist results/${DESIGN_NAME}_final.v -phys 
-saveNetlist results/${DESIGN_NAME}_final_no_phys.v -includePowerGround 
-saveNetlist results/${DESIGN_NAME}_top_cell.v -topCell ${DESIGN_NAME} -includePowerGround
+defOut results/${DESIGN_NAME}_v2.def
+saveNetlist results/${DESIGN_NAME}_final_v2.v -phys 
+saveNetlist results/${DESIGN_NAME}_final_no_phys_v2.v -includePowerGround 
+saveNetlist results/${DESIGN_NAME}_top_cell_v2.v -topCell ${DESIGN_NAME} -includePowerGround
 write_sdf results/${DESIGN_NAME}.sdf
 
 # GDS for fabrication
 setStreamOutMode -snapToMGrid true
 
-streamOut results/${DESIGN_NAME}.gds \
+streamOut results/${DESIGN_NAME}_v2.gds \
     -structureName ${DESIGN_NAME} \
     -mapFile ${GDS_MAP} \
     -units 1000 \
@@ -195,16 +195,16 @@ streamOut results/${DESIGN_NAME}.gds \
     -mode ALL
 
 # LEF abstract for hierarchical P&R
-write_lef_abstract results/${DESIGN_NAME}.lef \
+write_lef_abstract results/${DESIGN_NAME}_v2.lef \
     -stripePin
 
 # Command to create OA Library
-if {[catch {createLib ${DESIGN_NAME} -referenceTech tsmcN65} err]} {
-    puts "Failed to create library ${DESIGN_NAME}: $err"
+if {[catch {createLib ${DESIGN_NAME}_v2 -referenceTech tsmcN65} err]} {
+    puts "Failed to create library ${DESIGN_NAME}_v2: $err"
 }
 
 # Command to save to OA Library
-oaOut ${DESIGN_NAME} ${DESIGN_NAME} layout \
+oaOut ${DESIGN_NAME}_v2 ${DESIGN_NAME} layout \
     -refLibs {tcbn65lplvt tsmcN65} \
     -autoRemaster \
     -leafViewNames {layout} 

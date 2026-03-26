@@ -3,7 +3,7 @@
 #==============================================================================
 
 # Setting dimensions in um
-set WIDTH 140.0
+set WIDTH 70.0
 set HEIGHT 450.0
 set MARGIN 5.0
 
